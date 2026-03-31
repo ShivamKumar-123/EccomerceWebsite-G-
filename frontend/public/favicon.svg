@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#greenGrad)"/>
+  
+  <!-- Gear Icon -->
+  <g fill="white">
+    <!-- Outer gear teeth -->
+    <path d="M32 8 L35 12 L38 8 L38 14 L42 12 L40 18 L44 18 L40 22 L44 24 L38 26 L40 30 L34 28 L34 32 L30 28 L28 32 L26 26 L20 28 L22 22 L16 22 L20 18 L16 14 L22 14 L20 10 L26 12 L28 8 L30 14 L32 8Z" opacity="0.3"/>
+    
+    <!-- Main gear -->
+    <circle cx="32" cy="32" r="14" fill="none" stroke="white" stroke-width="4"/>
+    <circle cx="32" cy="32" r="6" fill="url(#yellowGrad)"/>
+    
+    <!-- Gear teeth -->
+    <rect x="30" y="14" width="4" height="6" rx="1"/>
+    <rect x="30" y="44" width="4" height="6" rx="1"/>
+    <rect x="14" y="30" width="6" height="4" rx="1"/>
+    <rect x="44" y="30" width="6" height="4" rx="1"/>
+    
+    <!-- Diagonal teeth -->
+    <rect x="19" y="19" width="5" height="4" rx="1" transform="rotate(45 21.5 21)"/>
+    <rect x="40" y="19" width="5" height="4" rx="1" transform="rotate(-45 42.5 21)"/>
+    <rect x="19" y="41" width="5" height="4" rx="1" transform="rotate(-45 21.5 43)"/>
+    <rect x="40" y="41" width="5" height="4" rx="1" transform="rotate(45 42.5 43)"/>
+  </g>
+  
+  <!-- H letter in center -->
+  <text x="32" y="37" font-family="Arial Black, sans-serif" font-size="14" font-weight="900" fill="white" text-anchor="middle">H</text>
+</svg>
