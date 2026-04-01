@@ -25,29 +25,89 @@ video {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  @apply bg-gray-50 text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+  @apply bg-stone-50 text-stone-900 antialiased dark:bg-[#0c1210] dark:text-stone-100;
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #1a5f2a 0%, #2d8f3d 100%);
+  background: linear-gradient(135deg, #166534 0%, #ca8a04 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .hero-gradient {
-  background: linear-gradient(135deg, #0a2e14 0%, #1a5f2a 50%, #0d3d18 100%);
+  background: linear-gradient(145deg, #052e16 0%, #166534 45%, #14532d 100%);
 }
 
 .card-hover {
-  transition: all 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px -12px rgba(22, 101, 52, 0.18);
+}
+
+/* Header category row — slim pill scrollbar (replaces heavy OS default) */
+.category-strip-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(22, 101, 52, 0.35) transparent;
+  scroll-behavior: smooth;
+}
+
+.category-strip-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-strip-scroll::-webkit-scrollbar-track {
+  margin: 0 6px;
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.category-strip-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 101, 52, 0.28),
+    rgba(5, 46, 22, 0.42)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-clip: padding-box;
+  box-shadow: 0 1px 2px rgba(22, 101, 52, 0.12);
+}
+
+.category-strip-scroll:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    rgba(22, 101, 52, 0.5),
+    rgba(5, 46, 22, 0.62)
+  );
+}
+
+.dark .category-strip-scroll {
+  scrollbar-color: rgba(52, 211, 153, 0.4) transparent;
+}
+
+.dark .category-strip-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.25),
+    rgba(16, 185, 129, 0.45)
+  );
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.dark .category-strip-scroll:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.45),
+    rgba(16, 185, 129, 0.65)
+  );
 }

@@ -14,7 +14,7 @@ export function normalizeBanner(row) {
     description: row.description || '',
     image: row.image || '',
     link: row.link || '/products',
-    bgColor: row.bgColor || row.bg_gradient || 'from-violet-600 to-indigo-700',
+    bgColor: row.bgColor || row.bg_gradient || 'from-emerald-800 to-emerald-950',
     sortOrder: row.sortOrder ?? row.sort_order ?? 0,
     isActive: row.isActive !== false && row.is_active !== false,
     active: row.isActive !== false && row.is_active !== false,

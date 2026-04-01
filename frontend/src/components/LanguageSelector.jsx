@@ -152,7 +152,7 @@ const LanguageSelector = ({ scrolled = false }) => {
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all ${
           scrolled
-            ? 'bg-slate-200/80 hover:bg-slate-300/90 text-slate-800 dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200'
+            ? 'bg-stone-200/80 hover:bg-stone-300/90 text-stone-800 dark:bg-white/10 dark:hover:bg-white/15 dark:text-stone-200'
             : 'bg-white/10 hover:bg-white/20 text-white'
         }`}
       >

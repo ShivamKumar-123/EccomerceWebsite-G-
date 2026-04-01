@@ -337,12 +337,9 @@ export const CartStore = {
 export const ProductStore = {
   // Default products
   defaultProducts: [
-    { id: 1, name: '3 HP Mini Rice Mill (Model: 6N-4DSV)', category: 'rice-mills', price: '₹34,999', stock: 50, image: 'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id: 2, name: '3 HP Mini Rice Mill (Model: 6W50)', category: 'rice-mills', price: '₹32,999', stock: 35, image: 'https://images.pexels.com/photos/4483774/pexels-photo-4483774.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id: 3, name: '7 HP Petrol Engine Mini Rice Mill', category: 'rice-mills', price: '₹45,999', stock: 20, image: 'https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id: 4, name: '2 HP Sugarcane Juicer Machine', category: 'food-processing', price: '₹38,999', stock: 45, image: 'https://images.pexels.com/photos/5945848/pexels-photo-5945848.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id: 5, name: 'HEAVYTECH Oil Machine S10', category: 'food-processing', price: '₹52,999', stock: 30, image: 'https://images.pexels.com/photos/4483608/pexels-photo-4483608.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { id: 6, name: 'HEAVYTECH Oil Machine K38', category: 'food-processing', price: '₹48,999', stock: 25, image: 'https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?auto=compress&cs=tinysrgb&w=400' },
+    { id: 1, name: 'Noise-cancel Bluetooth Headphones Pro', category: 'electronics', price: '₹4,999', stock: 40, image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&w=400' },
+    { id: 2, name: 'Smart Fitness Band OLED', category: 'electronics', price: '₹2,499', stock: 55, image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&w=400' },
+    { id: 3, name: 'USB-C Fast Charger 65W', category: 'electronics', price: '₹1,299', stock: 80, image: 'https://images.pexels.com/photos/163117/keyboard-full-clean-workspace-163117.jpeg?auto=compress&w=400' },
   ],
 
   // Get all products

@@ -41,7 +41,7 @@ export default function HomeSiteSections() {
       {sections.map((s) => (
         <article
           key={s.id}
-          className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 sm:p-8 shadow-lg dark:border-white/10 dark:from-slate-900/90 dark:to-slate-900/60"
+          className="rounded-3xl border border-stone-200/90 bg-gradient-to-br from-white to-stone-50 p-5 sm:p-8 shadow-soft dark:border-white/10 dark:from-stone-900/90 dark:to-stone-900/60"
         >
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
             {s.image ? (
@@ -50,9 +50,9 @@ export default function HomeSiteSections() {
               </div>
             ) : null}
             <div className="min-w-0 flex-1 text-center lg:text-left">
-              <h2 className="text-xl font-black text-slate-900 dark:text-white sm:text-2xl">{s.title}</h2>
+              <h2 className="text-xl font-extrabold text-stone-900 dark:text-white sm:text-2xl tracking-tight">{s.title}</h2>
               {s.body ? (
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-stone-600 dark:text-stone-300 sm:text-base">
                   {s.body}
                 </p>
               ) : null}
@@ -61,7 +61,7 @@ export default function HomeSiteSections() {
                   {String(s.ctaLink).startsWith('/') ? (
                     <Link
                       to={s.ctaLink}
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
+                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
                     >
                       {s.ctaLabel}
                     </Link>
@@ -70,7 +70,7 @@ export default function HomeSiteSections() {
                       href={s.ctaLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
+                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
                     >
                       {s.ctaLabel}
                     </a>

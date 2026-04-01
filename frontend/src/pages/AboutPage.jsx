@@ -101,11 +101,11 @@ const AboutPage = () => {
   ];
 
   const milestones = [
-    { year: '2009', title: 'Company Founded', desc: 'Started with a vision to revolutionize Indian agriculture' },
+    { year: '2009', title: 'Company Founded', desc: 'Started with a vision to make quality shopping simple for every Indian' },
     { year: '2012', title: 'First 1000 Customers', desc: 'Reached our first major milestone' },
     { year: '2015', title: 'Pan-India Expansion', desc: 'Expanded operations to 15+ states' },
     { year: '2018', title: 'ISO Certification', desc: 'Achieved ISO 9001:2015 certification' },
-    { year: '2021', title: '50K+ Farmers', desc: 'Crossed 50,000 happy customers' },
+    { year: '2021', title: '50K+ Customers', desc: 'Crossed 50,000 happy shoppers' },
     { year: '2024', title: 'Innovation Hub', desc: 'Launched R&D center for new products' },
   ];
 
@@ -166,13 +166,12 @@ const AboutPage = () => {
               </h2>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed">
                 Founded in 2009, HeavyTech Machinery began with a simple yet powerful vision: to transform 
-                Indian agriculture through accessible, high-quality machinery. What started as a small 
-                workshop in Raipur has grown into one of India's most trusted agricultural equipment providers.
+                everyday life through accessible, quality products. What started as a small 
+                team in Raipur has grown into a trusted marketplace for families across India.
               </p>
               <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-                Today, we serve over 50,000 farmers across 28+ states, offering a comprehensive range of 
-                products from rice mills to food processing equipment. Our commitment to quality, innovation, 
-                and customer satisfaction remains unwavering.
+                Today, we serve shoppers across 28+ states with electronics, fashion, home, beauty, and more. Our commitment to quality, 
+                fair pricing, and customer satisfaction remains unwavering.
               </p>
 
               <div className="flex flex-wrap gap-4">

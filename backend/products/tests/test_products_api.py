@@ -11,7 +11,7 @@ from products.models import Category, Product
 class ProductAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.cat = Category.objects.create(name="Rice Mills", slug="rice-mills")
+        self.cat = Category.objects.create(name="Electronics", slug="electronics")
         self.product = Product.objects.create(
             category=self.cat,
             name="Test Mill",

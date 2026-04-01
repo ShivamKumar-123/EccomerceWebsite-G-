@@ -22,9 +22,9 @@ const ServicesPage = () => {
   }, []);
 
   const services = [
-    { icon: Cog, title: 'Cutting-Edge Machinery', desc: 'Elevate your farming methods with our cutting-edge machinery. Optimize your productivity, reduce your workload, and take a step towards sustainable agriculture.', color: 'from-blue-500 to-indigo-600' },
-    { icon: Leaf, title: 'Sustainable Agriculture', desc: 'We champion sustainable farming by enhancing yields, minimizing waste, and optimizing resources. Our eco-friendly solutions help build a greener future.', color: 'from-green-500 to-emerald-600' },
-    { icon: Truck, title: 'Pan-India Delivery', desc: 'Fast and reliable delivery across all 28+ states. Your machinery reaches you safely and on time, no matter where you are in India.', color: 'from-orange-500 to-red-600' },
+    { icon: Cog, title: 'Curated Catalogue', desc: 'Browse vetted electronics, fashion, home, beauty, and more—all in one place with clear pricing and details.', color: 'from-blue-500 to-indigo-600' },
+    { icon: Leaf, title: 'Sustainable Choices', desc: 'We highlight quality brands and responsible options where possible, so you can shop with confidence.', color: 'from-green-500 to-emerald-600' },
+    { icon: Truck, title: 'Pan-India Delivery', desc: 'Fast, reliable delivery across India. Your orders are packed with care and tracked to your door.', color: 'from-orange-500 to-red-600' },
     { icon: Headphones, title: '24/7 Customer Support', desc: 'Round-the-clock customer support to assist you with any queries or technical assistance you need. We\'re always here to help.', color: 'from-purple-500 to-pink-600' },
     { icon: Shield, title: 'Quality Assurance', desc: 'ISO certified products with rigorous quality checks ensuring durability and peak performance. Every machine meets international standards.', color: 'from-yellow-500 to-orange-600' },
     { icon: Wrench, title: 'Installation & Training', desc: 'Professional installation services and comprehensive training to ensure you get the most out of your machinery from day one.', color: 'from-cyan-500 to-blue-600' },
@@ -68,7 +68,7 @@ const ServicesPage = () => {
               Complete <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">Farming Solutions</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-1">
-              From machinery to support, we provide end-to-end services to ensure your farming success
+              From browsing to delivery, we focus on a smooth shopping experience end to end
             </p>
           </div>
         </div>
@@ -145,9 +145,8 @@ const ServicesPage = () => {
                 Become a <span className="text-yellow-400">HeavyTech Dealer</span>
               </h2>
               <p className="text-white/80 text-lg mb-8 leading-relaxed">
-                Begin a fulfilling journey in contributing to sustainable agriculture in your community. 
-                As a HeavyTech dealer, you'll be part of a network committed to transforming farming 
-                practices across the nation.
+                Partner with us to bring GoldyMart to more customers in your region.
+                As a dealer, you join a network focused on trust, support, and growth.
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">

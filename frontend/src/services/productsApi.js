@@ -228,17 +228,96 @@ export function getBackendConfig() {
   };
 }
 
+function mapProductRow(p) {
+  return {
+    ...p,
+    rating: p.rating != null ? Number(p.rating) : 4.5,
+    sizeVariants: p.sizeVariants || p.size_variants || [],
+    ageGroups: p.ageGroups || p.age_groups || [],
+    genders: p.genders || [],
+    brand: p.brand || '',
+    colors: p.colors || [],
+    discountPercent: Number(p.discountPercent ?? p.discount_percent ?? 0) || 0,
+    createdAt: p.createdAt || p.created_at || null,
+  };
+}
+
 /**
- * @param {{ admin?: boolean, category?: string, search?: string }} opts
+ * Storefront page size (must match backend ProductPagination.page_size for guests).
+ */
+export const STOREFRONT_PRODUCT_PAGE_SIZE = 12;
+
+/**
+ * @param {{
+ *   admin?: boolean,
+ *   category?: string,
+ *   search?: string,
+ *   ageGroups?: string[],
+ *   genders?: string[],
+ *   brands?: string[],
+ *   colors?: string[],
+ *   sizes?: string[],
+ *   minPrice?: string|number,
+ *   maxPrice?: string|number,
+ *   minRating?: string|number,
+ *   page?: number,
+ *   pageSize?: string|number,
+ *   footwear?: boolean,
+ *   categories?: string[],
+ *   discounts?: string[]|number[],
+ *   ordering?: string,
+ * }} opts
+ * @returns {Promise<{ results: object[], count: number, next: string|null, previous: string|null }>}
  */
 export async function listProducts(opts = {}) {
   if (!canCallApi()) throw new Error('API URL not configured (set VITE_API_URL or use npm run dev with proxy)');
   const params = new URLSearchParams();
+  if (opts.footwear) {
+    params.set('footwear', '1');
+  }
   if (opts.category && opts.category !== 'all') {
     params.set('category', String(opts.category).trim());
   }
+  const join = (arr) => (Array.isArray(arr) && arr.length ? arr.join(',') : '');
+  const cats = join(opts.categories);
+  if (cats) params.set('categories', cats);
   if (opts.search && String(opts.search).trim()) {
     params.set('search', String(opts.search).trim());
+  }
+  const ag = join(opts.ageGroups);
+  if (ag) params.set('age_groups', ag);
+  const g = join(opts.genders);
+  if (g) params.set('genders', g);
+  const b = join(opts.brands);
+  if (b) params.set('brands', b);
+  const c = join(opts.colors);
+  if (c) params.set('colors', c);
+  const sz = join(opts.sizes);
+  if (sz) params.set('sizes', sz);
+  if (opts.minPrice != null && String(opts.minPrice).trim() !== '') {
+    params.set('min_price', String(opts.minPrice).trim());
+  }
+  if (opts.maxPrice != null && String(opts.maxPrice).trim() !== '') {
+    params.set('max_price', String(opts.maxPrice).trim());
+  }
+  if (opts.minRating != null && String(opts.minRating).trim() !== '') {
+    params.set('min_rating', String(opts.minRating).trim());
+  }
+  const discs = join(
+    Array.isArray(opts.discounts)
+      ? opts.discounts.map((d) => String(d).trim()).filter(Boolean)
+      : []
+  );
+  if (discs) params.set('discounts', discs);
+  if (opts.ordering != null && String(opts.ordering).trim() !== '') {
+    params.set('ordering', String(opts.ordering).trim());
+  }
+  if (opts.page != null) {
+    const pg = Number(opts.page);
+    if (Number.isFinite(pg) && pg >= 1) params.set('page', String(Math.floor(pg)));
+  }
+  if (opts.pageSize != null && String(opts.pageSize).trim() !== '') {
+    params.set('page_size', String(opts.pageSize).trim());
   }
   const q = params.toString();
   const url = apiUrl('/api/products/', q);
@@ -247,14 +326,81 @@ export async function listProducts(opts = {}) {
     method: 'GET',
     auth: sendAuth,
   });
-  if (!r.ok) throw new Error(`Failed to load products (${r.status})`);
+  if (!r.ok) {
+    if (r.status === 404) {
+      const err = new Error('PAGE_NOT_FOUND');
+      err.code = 'INVALID_PAGE';
+      throw err;
+    }
+    throw new Error(`Failed to load products (${r.status})`);
+  }
   const data = await r.json();
-  const rows = Array.isArray(data) ? data : data.results || [];
-  return rows.map((p) => ({
-    ...p,
-    rating: p.rating != null ? Number(p.rating) : 4.5,
-    sizeVariants: p.sizeVariants || p.size_variants || [],
-  }));
+  if (Array.isArray(data)) {
+    const results = data.map(mapProductRow);
+    return { results, count: results.length, next: null, previous: null };
+  }
+  const rawResults = data.results || [];
+  return {
+    results: rawResults.map(mapProductRow),
+    count: typeof data.count === 'number' ? data.count : rawResults.length,
+    next: data.next || null,
+    previous: data.previous || null,
+  };
+}
+
+/** Load every product page for the admin panel (JWT required). */
+export async function listAllAdminProducts() {
+  const all = [];
+  let page = 1;
+  const pageSize = 500;
+  for (;;) {
+    const { results, count } = await listProducts({ admin: true, page, pageSize });
+    all.push(...results);
+    if (results.length === 0 || all.length >= count) break;
+    page += 1;
+    if (page > 200) break;
+  }
+  return all;
+}
+
+/**
+ * Distinct brands, sizes, colors for sidebar (same category + search as listing, no facet filters).
+ */
+export async function fetchProductFilterOptions({ category, search } = {}) {
+  if (!canCallApi()) throw new Error('API URL not configured');
+  const params = new URLSearchParams();
+  if (category && category !== 'all') params.set('category', String(category).trim());
+  if (search && String(search).trim()) params.set('search', String(search).trim());
+  const qs = params.toString();
+  const r = await fetch(apiUrl('/api/products/filter-options/', qs));
+  if (!r.ok) throw new Error(`Filter options failed (${r.status})`);
+  const data = await r.json();
+  return {
+    brands: Array.isArray(data.brands) ? data.brands : [],
+    sizes: Array.isArray(data.sizes) ? data.sizes : [],
+    colors: Array.isArray(data.colors) ? data.colors : [],
+  };
+}
+
+/** Facets + price range for footwear listing (ignores facet filters). */
+export async function fetchShoeFilterOptions({ search } = {}) {
+  if (!canCallApi()) throw new Error('API URL not configured');
+  const params = new URLSearchParams();
+  params.set('footwear', '1');
+  if (search && String(search).trim()) params.set('search', String(search).trim());
+  const qs = params.toString();
+  const r = await fetch(apiUrl('/api/products/filter-options/', qs));
+  if (!r.ok) throw new Error(`Shoe filter options failed (${r.status})`);
+  const data = await r.json();
+  return {
+    brands: Array.isArray(data.brands) ? data.brands : [],
+    sizes: Array.isArray(data.sizes) ? data.sizes : [],
+    colors: Array.isArray(data.colors) ? data.colors : [],
+    priceMin: data.price_min != null ? Number(data.price_min) : null,
+    priceMax: data.price_max != null ? Number(data.price_max) : null,
+    count: typeof data.count === 'number' ? data.count : 0,
+    shoeTypes: Array.isArray(data.shoe_types) ? data.shoe_types : [],
+  };
 }
 
 /** @returns {Promise<Array<{ id: number, name: string, slug: string }>>} */

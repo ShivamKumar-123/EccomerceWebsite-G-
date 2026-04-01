@@ -13,6 +13,10 @@ import {
 import { canCallApi } from '../services/productsApi';
 import { createOrderApi } from '../services/operationsApi';
 import { normalizeCartArray } from '../lib/cartLine';
+import {
+  cartItemsSkipDeliveryOptions,
+  FREIGHT_ON_REQUEST_DELIVERY,
+} from '../lib/deliveryPolicy';
 
 function cartStorageHasItems() {
   try {
@@ -76,10 +80,18 @@ const CheckoutPage = () => {
     return () => window.removeEventListener('heavytech-delivery-updated', onUpd);
   }, [selectedDeliveryId]);
 
-  const selectedDelivery = useMemo(
-    () => getDeliveryOptionById(selectedDeliveryId),
-    [selectedDeliveryId, deliveryOptions]
+  const skipDeliveryChoice = useMemo(
+    () => cartItemsSkipDeliveryOptions(cartItems),
+    [cartItems]
   );
+
+  const selectedDelivery = useMemo(() => {
+    if (skipDeliveryChoice) return FREIGHT_ON_REQUEST_DELIVERY;
+    return (
+      getDeliveryOptionById(selectedDeliveryId) ||
+      deliveryOptions[0] || { name: 'Standard', fee: 0, description: '', etaDays: 7, id: 'standard' }
+    );
+  }, [skipDeliveryChoice, selectedDeliveryId, deliveryOptions]);
 
   // Pre-fill form with user data if logged in
   useEffect(() => {
@@ -171,7 +183,8 @@ const CheckoutPage = () => {
         currentUserId = JSON.parse(currentUserStr).id;
       }
 
-      const del = getDeliveryOptionById(selectedDeliveryId);
+      const skipDel = cartItemsSkipDeliveryOptions(cartItemsToUse);
+      const del = skipDel ? FREIGHT_ON_REQUEST_DELIVERY : getDeliveryOptionById(selectedDeliveryId);
       const deliveryFee = del?.fee ?? 0;
 
       const itemsGst = orderTotal * 1.18;
@@ -195,7 +208,7 @@ const CheckoutPage = () => {
         deliveryOptionId: del?.id || selectedDeliveryId,
         deliveryLabel: del?.name || 'Standard',
         deliveryDescription: del?.description || '',
-        deliveryEtaDays: del?.etaDays ?? 7,
+        deliveryEtaDays: del?.etaDays ?? (skipDel ? 0 : 7),
         trackingNumber: '',
         carrier: '',
       });
@@ -377,41 +390,58 @@ const CheckoutPage = () => {
                   <Truck className="text-green-600 dark:text-green-400" size={22} />
                   Delivery option
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  Choose how you want to receive your order. Fees are set by the store admin.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  {deliveryOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => setSelectedDeliveryId(opt.id)}
-                      className={`text-left rounded-2xl border-2 p-4 transition-all ${
-                        selectedDeliveryId === opt.id
-                          ? 'border-green-600 bg-green-50 dark:bg-green-900/30 dark:border-green-500 ring-2 ring-green-500/30'
-                          : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-green-300 dark:hover:border-green-700'
-                      }`}
-                    >
-                      <p className="font-bold text-gray-900 dark:text-white">{opt.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{opt.description}</p>
-                      <p className="text-sm font-semibold text-green-600 dark:text-green-400 mt-2">
-                        {opt.fee === 0 ? 'Free' : formatPrice(opt.fee)}
-                        <span className="text-gray-500 dark:text-gray-400 font-normal"> · ~{opt.etaDays} day{opt.etaDays !== 1 ? 's' : ''}</span>
-                      </p>
-                    </button>
-                  ))}
-                </div>
-                {deliveryOptions.length === 0 && (
-                  <p className="text-amber-600 dark:text-amber-400 text-sm">No delivery options available. Contact support.</p>
+                {skipDeliveryChoice ? (
+                  <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800/60 p-4 sm:p-5">
+                    <p className="font-bold text-amber-900 dark:text-amber-100">{FREIGHT_ON_REQUEST_DELIVERY.name}</p>
+                    <p className="text-sm text-amber-800 dark:text-amber-200/90 mt-2 leading-relaxed">
+                      {FREIGHT_ON_REQUEST_DELIVERY.description}
+                    </p>
+                    <p className="text-sm font-semibold text-green-700 dark:text-green-400 mt-3">
+                      Delivery fee on order: <strong>₹0</strong> (quoted separately after confirmation)
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      Choose how you want to receive your order. Fees are set by the store admin.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                      {deliveryOptions.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setSelectedDeliveryId(opt.id)}
+                          className={`text-left rounded-2xl border-2 p-4 transition-all ${
+                            selectedDeliveryId === opt.id
+                              ? 'border-green-600 bg-green-50 dark:bg-green-900/30 dark:border-green-500 ring-2 ring-green-500/30'
+                              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-green-300 dark:hover:border-green-700'
+                          }`}
+                        >
+                          <p className="font-bold text-gray-900 dark:text-white">{opt.name}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{opt.description}</p>
+                          <p className="text-sm font-semibold text-green-600 dark:text-green-400 mt-2">
+                            {opt.fee === 0 ? 'Free' : formatPrice(opt.fee)}
+                            <span className="text-gray-500 dark:text-gray-400 font-normal">
+                              {' '}
+                              · ~{opt.etaDays} day{opt.etaDays !== 1 ? 's' : ''}
+                            </span>
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                    {deliveryOptions.length === 0 && (
+                      <p className="text-amber-600 dark:text-amber-400 text-sm">No delivery options available. Contact support.</p>
+                    )}
+                  </>
                 )}
               </div>
 
               <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <button
                   onClick={() => setStep(2)}
-                  disabled={!isStep1Valid() || deliveryOptions.length === 0}
+                  disabled={!isStep1Valid() || (!skipDeliveryChoice && deliveryOptions.length === 0)}
                   className={`w-full sm:w-auto px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all ${
-                    isStep1Valid() && deliveryOptions.length > 0
+                    isStep1Valid() && (skipDeliveryChoice || deliveryOptions.length > 0)
                       ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white hover:shadow-xl hover:scale-105'
                       : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}

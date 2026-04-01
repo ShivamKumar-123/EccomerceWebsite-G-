@@ -17,9 +17,12 @@ import ProfilePage from './pages/ProfilePage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import { CartProvider } from './context/CartContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider } from './context/AuthContext';
 import { UserAuthProvider } from './context/UserAuthContext';
 import LoadingScreen from './components/LoadingScreen';
+import FavoritesPage from './pages/FavoritesPage';
+import ShoesPage from './pages/ShoesPage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +33,7 @@ function App() {
       <AuthProvider>
         <UserAuthProvider>
           <CartProvider>
+            <FavoritesProvider>
             <Router>
               <Routes>
                 {/* Guest Routes - Only accessible when NOT logged in */}
@@ -43,7 +47,9 @@ function App() {
                 {/* Public storefront (catalogue + cart + checkout use Django API) */}
                 <Route path="/" element={<Layout><HomePage /></Layout>} />
                 <Route path="/products" element={<Layout><ProductsPage /></Layout>} />
+                <Route path="/shoes" element={<Layout><ShoesPage /></Layout>} />
                 <Route path="/cart" element={<Layout><CartPage /></Layout>} />
+                <Route path="/favorites" element={<Layout><FavoritesPage /></Layout>} />
                 <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
                 <Route path="/track-order" element={<Layout><TrackOrderPage /></Layout>} />
                 <Route path="/about" element={<Layout><AboutPage /></Layout>} />
@@ -54,6 +60,7 @@ function App() {
                 <Route path="/profile" element={<ProtectedRoute><Layout><ProfilePage /></Layout></ProtectedRoute>} />
               </Routes>
             </Router>
+            </FavoritesProvider>
           </CartProvider>
         </UserAuthProvider>
       </AuthProvider>

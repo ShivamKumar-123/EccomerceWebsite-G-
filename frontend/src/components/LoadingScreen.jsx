@@ -31,11 +31,11 @@ const LoadingScreen = ({ onLoadingComplete }) => {
   if (!isVisible) return null;
 
   const shell = isDark
-    ? 'bg-gradient-to-br from-[#0c0a14] via-violet-950/40 to-[#0c0a14]'
-    : 'bg-gradient-to-br from-slate-50 via-violet-50/80 to-fuchsia-50';
+    ? 'bg-gradient-to-br from-[#0c1210] via-emerald-950/50 to-[#0c1210]'
+    : 'bg-gradient-to-br from-stone-50 via-emerald-50/60 to-amber-50/70';
 
-  const gridColor = isDark ? 'rgba(167, 139, 250, 0.12)' : 'rgba(139, 92, 246, 0.15)';
-  const particleClass = isDark ? 'bg-fuchsia-400/35' : 'bg-violet-500/40';
+  const gridColor = isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(22, 101, 52, 0.12)';
+  const particleClass = isDark ? 'bg-emerald-400/35' : 'bg-emerald-600/30';
 
   return (
     <div
@@ -69,15 +69,15 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       <div className="relative z-10 px-4 text-center">
         <div className="relative mx-auto mb-8 flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center">
           <div
-            className="absolute inset-0 rounded-full border-2 border-violet-500/20 dark:border-violet-400/20"
+            className="absolute inset-0 rounded-full border-2 border-emerald-500/20 dark:border-emerald-400/20"
             aria-hidden
           />
           <svg viewBox="0 0 120 120" className="absolute h-full w-full -rotate-90" aria-hidden>
             <defs>
               <linearGradient id="gmLoadRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#a855f7" />
-                <stop offset="50%" stopColor="#d946ef" />
-                <stop offset="100%" stopColor="#f59e0b" />
+                <stop offset="0%" stopColor="#15803d" />
+                <stop offset="50%" stopColor="#16a34a" />
+                <stop offset="100%" stopColor="#ca8a04" />
               </linearGradient>
             </defs>
             <circle
@@ -92,40 +92,40 @@ const LoadingScreen = ({ onLoadingComplete }) => {
               className="transition-all duration-300"
             />
           </svg>
-          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/90 to-fuchsia-600/90 shadow-lg shadow-violet-900/40 ring-2 ring-white/20 dark:ring-white/10">
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-700/95 to-emerald-600/95 shadow-lg shadow-emerald-900/35 ring-2 ring-amber-400/25 dark:ring-white/10">
             <ShoppingBag className="h-10 w-10 text-white" strokeWidth={1.75} />
           </div>
         </div>
 
         <h1
-          className={`mb-1 text-3xl font-black tracking-tight sm:text-4xl ${
-            isDark ? 'text-white' : 'text-slate-900'
+          className={`mb-1 text-3xl font-extrabold tracking-tight sm:text-4xl ${
+            isDark ? 'text-white' : 'text-stone-900'
           }`}
         >
-          <span className="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-600 bg-clip-text text-transparent">
             {STORE}
           </span>
         </h1>
-        <p className={`mb-8 text-sm sm:text-base ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+        <p className={`mb-8 text-sm sm:text-base ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
           Your marketplace — loading catalogue &amp; deals
         </p>
 
         <div className="mx-auto w-52 sm:w-64">
           <div
-            className={`h-2 overflow-hidden rounded-full ${isDark ? 'bg-slate-800' : 'bg-violet-100'}`}
+            className={`h-2 overflow-hidden rounded-full ${isDark ? 'bg-stone-800' : 'bg-emerald-100'}`}
           >
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400 transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-amber-500 transition-all duration-300"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
-          <p className="mt-3 text-sm font-semibold text-violet-600 dark:text-fuchsia-300">
+          <p className="mt-3 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
             {Math.min(Math.round(progress), 100)}%
           </p>
         </div>
 
         <p
-          className={`mt-4 text-xs sm:text-sm ${isDark ? 'text-slate-500' : 'text-slate-500'} animate-pulse`}
+          className={`mt-4 text-xs sm:text-sm ${isDark ? 'text-stone-500' : 'text-stone-500'} animate-pulse`}
         >
           Preparing your shopping experience…
         </p>

@@ -92,14 +92,14 @@ const About = () => {
               Covering India with Advanced <span className="text-primary">Farming Solutions</span>
             </h2>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              Our commitment to elevating India's agriculture reaches all corners of the nation, 
+              Our commitment to serving customers reaches all corners of the nation, 
               instilling efficiency through our innovative machinery. From the rugged mountains of 
               Jammu & Kashmir in the north to the rich soils of Punjab; from the expansive farms of 
               Madhya Pradesh to the seaside plains of Maharashtra.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
               At HeavyTech, we are more than a business. We are partners in India's journey towards 
-              a prosperous agricultural future. Our diverse range of agriculture and food processing 
+              a better shopping experience. Our diverse range of lifestyle and home products 
               machines stands at the core of modern farming practices.
             </p>
 

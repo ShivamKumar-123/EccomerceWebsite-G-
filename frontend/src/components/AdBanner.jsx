@@ -59,24 +59,28 @@ const AdBanner = () => {
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-2xl shadow-lg ring-1 ring-slate-200 dark:shadow-xl dark:shadow-slate-900/10 dark:ring-white/10"
+      className="relative w-full overflow-hidden rounded-2xl shadow-card ring-1 ring-stone-200/90 dark:shadow-xl dark:shadow-stone-900/20 dark:ring-white/10"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className={`relative bg-gradient-to-r ${ad.bgColor || 'from-violet-600 to-indigo-800'} py-10 sm:py-14 lg:py-16`}>
+      <div className={`relative bg-gradient-to-r ${ad.bgColor || 'from-emerald-800 to-emerald-950'} py-10 sm:py-14 lg:py-16`}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_50%)] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative w-full min-w-0">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
-            <div className="text-center lg:text-left text-white flex-1">
-              <div className="inline-block bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide">
+            <div className="text-center lg:text-left flex-1 w-full min-w-0 rounded-2xl border border-stone-200/90 bg-white/92 p-6 sm:p-8 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-stone-950/80 dark:shadow-stone-950/40">
+              <div className="inline-block bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide dark:bg-white/15 dark:text-white">
                 Featured
               </div>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3 drop-shadow-sm">{ad.title}</h3>
-              <p className="text-white/90 text-sm sm:text-base lg:text-lg mb-5 max-w-xl leading-relaxed">{ad.description}</p>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3 text-stone-900 dark:text-white drop-shadow-none">
+                {ad.title}
+              </h3>
+              <p className="text-stone-600 text-sm sm:text-base lg:text-lg mb-5 max-w-xl leading-relaxed dark:text-stone-200">
+                {ad.description}
+              </p>
               {isInternal ? (
                 <Link
                   to={link}
-                  className="inline-flex items-center gap-2 bg-white text-violet-700 px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-black/10 hover:bg-violet-50 transition-colors"
+                  className="inline-flex items-center gap-2 bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:bg-emerald-600 transition-colors dark:bg-white dark:text-emerald-900 dark:shadow-black/20 dark:hover:bg-emerald-50"
                 >
                   Shop now
                 </Link>
@@ -85,7 +89,7 @@ const AdBanner = () => {
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-white text-violet-700 px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-violet-50 transition-colors"
+                  className="inline-flex items-center gap-2 bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-emerald-600 transition-colors dark:bg-white dark:text-emerald-900 dark:hover:bg-emerald-50"
                 >
                   Shop now
                   <ExternalLink size={18} />
@@ -97,7 +101,7 @@ const AdBanner = () => {
                 <img
                   src={ad.image}
                   alt=""
-                  className="w-full h-44 sm:h-52 lg:h-56 object-cover rounded-2xl shadow-2xl ring-2 ring-white/20"
+                  className="w-full h-44 sm:h-52 lg:h-56 object-cover rounded-2xl shadow-2xl ring-2 ring-stone-200/90 dark:ring-white/20"
                 />
               </div>
             )}
@@ -109,7 +113,7 @@ const AdBanner = () => {
             <button
               type="button"
               onClick={() => setCurrentAd((p) => (p - 1 + ads.length) % ads.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur rounded-full flex items-center justify-center text-white z-10"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center z-10 bg-white/95 text-stone-800 shadow-md border border-stone-200/90 hover:bg-stone-50 dark:bg-stone-900/80 dark:text-white dark:border-white/15 dark:hover:bg-stone-800"
               aria-label="Previous"
             >
               <ChevronLeft size={22} />
@@ -117,7 +121,7 @@ const AdBanner = () => {
             <button
               type="button"
               onClick={() => setCurrentAd((p) => (p + 1) % ads.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur rounded-full flex items-center justify-center text-white z-10"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center z-10 bg-white/95 text-stone-800 shadow-md border border-stone-200/90 hover:bg-stone-50 dark:bg-stone-900/80 dark:text-white dark:border-white/15 dark:hover:bg-stone-800"
               aria-label="Next"
             >
               <ChevronRight size={22} />
@@ -129,7 +133,9 @@ const AdBanner = () => {
                   type="button"
                   onClick={() => setCurrentAd(idx)}
                   className={`h-2 rounded-full transition-all ${
-                    idx === currentAd ? 'bg-white w-8' : 'bg-white/40 w-2 hover:bg-white/60'
+                    idx === currentAd
+                      ? 'bg-stone-900 w-8 dark:bg-white'
+                      : 'bg-stone-900/35 w-2 hover:bg-stone-900/55 dark:bg-white/40 dark:hover:bg-white/60'
                   }`}
                   aria-label={`Slide ${idx + 1}`}
                 />

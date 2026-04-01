@@ -28,7 +28,7 @@ const Blog = () => {
       category: 'Agricultural Empowerment',
       date: 'August 21, 2023',
       image: 'https://images.unsplash.com/photo-1594771804886-a933bb2d609b?w=400&h=250&fit=crop',
-      excerpt: 'How HeavyTech is making agriculture accessible and empowering women farmers.'
+      excerpt: 'How we make quality products accessible to more shoppers across India.'
     },
     {
       title: 'Top 10 Tips for Maximizing Rice Mill Efficiency',
@@ -42,7 +42,7 @@ const Blog = () => {
       category: 'Sustainable Agriculture',
       date: 'August 21, 2023',
       image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=250&fit=crop',
-      excerpt: 'Our commitment to eco-friendly agriculture and sustainable farming solutions.'
+      excerpt: 'Our commitment to sustainable choices and responsible shopping.'
     },
     {
       title: 'The Evolution of Agricultural Machinery: From Tradition to Innovation',
@@ -96,7 +96,7 @@ const Blog = () => {
             Heavy Tech <span className="text-primary">Latest Blogs</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Stay updated with the latest news, tips, and insights from the world of agriculture and machinery.
+            Stay updated with shopping tips, deals, and stories from our store.
           </p>
         </div>
 

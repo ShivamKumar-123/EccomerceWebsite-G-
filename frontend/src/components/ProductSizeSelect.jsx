@@ -10,7 +10,7 @@ export default function ProductSizeSelect({ product, value, onChange, className 
       onChange={(e) => onChange(e.target.value)}
       className={
         className ||
-        'w-full text-xs rounded-lg border border-slate-300 bg-white text-slate-900 px-2 py-2 outline-none focus:ring-2 focus:ring-violet-500 dark:border-white/15 dark:bg-slate-800/90 dark:text-white'
+        'w-full text-xs rounded-lg border border-stone-300 bg-white text-stone-900 px-2 py-2 outline-none focus:ring-2 focus:ring-emerald-500/50 dark:border-white/15 dark:bg-stone-800/90 dark:text-white'
       }
     >
       <option value="">Select size</option>

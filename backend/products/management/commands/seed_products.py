@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 
+from products.catalog_constants import SHOE_CATEGORY_SLUGS
 from products.models import Banner, Category, Product
 from products.services.product_service import normalize_size_variants
 
@@ -33,27 +34,170 @@ SHOE_SIZES = [
     {"size": "UK 11", "stock": 5},
 ]
 
+UK_SIZES_FULL = [{"size": f"UK {n}", "stock": 5 + (n % 6)} for n in range(3, 12)]
+
+# Dedicated footwear catalogue (slug must be in SHOE_CATEGORY_SLUGS)
+SHOE_SEED = [
+    {
+        "slug": "sneakers",
+        "name": "Nike Revolution 6 Running Sneaker",
+        "price": 4299,
+        "image": "https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&w=400",
+        "badge": "Sale",
+        "rating": 4.7,
+        "brand": "Nike",
+        "discount_percent": 25,
+        "genders": ["men"],
+        "age_groups": ["young_adults", "adults"],
+        "colors": ["black"],
+    },
+    {
+        "slug": "sneakers",
+        "name": "Adidas Lite Racer Casual Sneaker",
+        "price": 3199,
+        "image": "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&w=400",
+        "badge": "New",
+        "rating": 4.5,
+        "brand": "Adidas",
+        "discount_percent": 10,
+        "genders": ["women", "unisex"],
+        "age_groups": ["teens", "young_adults"],
+        "colors": ["white"],
+    },
+    {
+        "slug": "sports-shoes",
+        "name": "Puma Softride Pro Training Shoe",
+        "price": 3799,
+        "image": "https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&w=400",
+        "badge": "Best Seller",
+        "rating": 4.6,
+        "brand": "Puma",
+        "discount_percent": 15,
+        "genders": ["men"],
+        "age_groups": ["young_adults", "adults"],
+        "colors": ["blue"],
+    },
+    {
+        "slug": "sports-shoes",
+        "name": "Reebok Zig Dynamica Athletic",
+        "price": 2899,
+        "image": "https://images.pexels.com/photos/1027130/pexels-photo-1027130.jpeg?auto=compress&w=400",
+        "badge": "",
+        "rating": 4.3,
+        "brand": "Reebok",
+        "discount_percent": 0,
+        "genders": ["women"],
+        "age_groups": ["adults"],
+        "colors": ["red"],
+    },
+    {
+        "slug": "casual-shoes",
+        "name": "Woodland Leather Casual Loafer",
+        "price": 3499,
+        "image": "https://images.pexels.com/photos/267320/pexels-photo-267320.jpeg?auto=compress&w=400",
+        "badge": "",
+        "rating": 4.5,
+        "brand": "Woodland",
+        "discount_percent": 20,
+        "genders": ["men"],
+        "age_groups": ["adults", "mature_adults"],
+        "colors": ["brown"],
+    },
+    {
+        "slug": "casual-shoes",
+        "name": "Bata Comfit Walk Casual",
+        "price": 1299,
+        "image": "https://images.pexels.com/photos/292999/pexels-photo-292999.jpeg?auto=compress&w=400",
+        "badge": "Popular",
+        "rating": 4.2,
+        "brand": "Bata",
+        "discount_percent": 5,
+        "genders": ["unisex"],
+        "age_groups": ["teens", "young_adults", "adults"],
+        "colors": ["black"],
+    },
+    {
+        "slug": "formal-shoes",
+        "name": "Bata Black Formal Oxford",
+        "price": 2199,
+        "image": "https://images.pexels.com/photos/267301/pexels-photo-267301.jpeg?auto=compress&w=400",
+        "badge": "Office",
+        "rating": 4.4,
+        "brand": "Bata",
+        "discount_percent": 0,
+        "genders": ["men"],
+        "age_groups": ["adults", "mature_adults"],
+        "colors": ["black"],
+    },
+    {
+        "slug": "formal-shoes",
+        "name": "Woodland Premium Tan Brogue",
+        "price": 4599,
+        "image": "https://images.pexels.com/photos/267294/pexels-photo-267294.jpeg?auto=compress&w=400",
+        "badge": "",
+        "rating": 4.6,
+        "brand": "Woodland",
+        "discount_percent": 30,
+        "genders": ["men"],
+        "age_groups": ["young_adults", "adults"],
+        "colors": ["brown"],
+    },
+    {
+        "slug": "boots",
+        "name": "Woodland High Ankle Trek Boot",
+        "price": 5299,
+        "image": "https://images.pexels.com/photos/755992/pexels-photo-755992.jpeg?auto=compress&w=400",
+        "badge": "Trending",
+        "rating": 4.7,
+        "brand": "Woodland",
+        "discount_percent": 12,
+        "genders": ["men", "unisex"],
+        "age_groups": ["adults", "mature_adults"],
+        "colors": ["brown"],
+    },
+    {
+        "slug": "boots",
+        "name": "Nike Manoa Leather Boot",
+        "price": 6899,
+        "image": "https://images.pexels.com/photos/1464625/pexels-photo-1464625.jpeg?auto=compress&w=400",
+        "badge": "New",
+        "rating": 4.5,
+        "brand": "Nike",
+        "discount_percent": 50,
+        "genders": ["men"],
+        "age_groups": ["young_adults", "adults"],
+        "colors": ["black"],
+    },
+    {
+        "slug": "sandals",
+        "name": "Bata Comfort Floaters",
+        "price": 899,
+        "image": "https://images.pexels.com/photos/336372/pexels-photo-336372.jpeg?auto=compress&w=400",
+        "badge": "Summer",
+        "rating": 4.1,
+        "brand": "Bata",
+        "discount_percent": 10,
+        "genders": ["men", "unisex"],
+        "age_groups": ["kids", "teens", "adults"],
+        "colors": ["brown"],
+    },
+    {
+        "slug": "sandals",
+        "name": "Adidas Adilette Comfort Slide",
+        "price": 1499,
+        "image": "https://images.pexels.com/photos/1319516/pexels-photo-1319516.jpeg?auto=compress&w=400",
+        "badge": "",
+        "rating": 4.4,
+        "brand": "Adidas",
+        "discount_percent": 0,
+        "genders": ["women", "unisex"],
+        "age_groups": ["teens", "young_adults"],
+        "colors": ["white"],
+    },
+]
+
 # Each product row: (title, price, image, badge, rating) or + (size_variants list)
 SEED = [
-    ("rice-mills", "Rice Mills", [
-        ("3 HP Mini Rice Mill (Model: 6N-4DSV)", 34999, "https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=400", "Best Seller", 4.8),
-        ("3 HP Mini Rice Mill (Model: 6W50)", 32999, "https://images.pexels.com/photos/4483774/pexels-photo-4483774.jpeg?auto=compress&cs=tinysrgb&w=400", "Popular", 4.7),
-        ("7 HP Petrol Engine Mini Rice Mill", 45999, "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400", "Premium", 4.9),
-        ("3 HP Mini Rice Mill (Model: 6N-4V)", 29999, "https://images.pexels.com/photos/4483610/pexels-photo-4483610.jpeg?auto=compress&cs=tinysrgb&w=400", "", 4.6),
-        ("3 HP Mini Rice Mill (Model: 6N40)", 27999, "https://images.pexels.com/photos/3735218/pexels-photo-3735218.jpeg?auto=compress&cs=tinysrgb&w=400", "New", 4.8),
-    ]),
-    ("food-processing", "Food Processing", [
-        ("2 HP Sugarcane Juicer Machine", 38999, "https://images.pexels.com/photos/5945848/pexels-photo-5945848.jpeg?auto=compress&cs=tinysrgb&w=400", "Popular", 4.5),
-        ("HEAVYTECH Oil Machine S10", 52999, "https://images.pexels.com/photos/4483608/pexels-photo-4483608.jpeg?auto=compress&cs=tinysrgb&w=400", "", 4.7),
-        ("HEAVYTECH Oil Machine K38", 48999, "https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?auto=compress&cs=tinysrgb&w=400", "Best Seller", 4.8),
-        ("HEAVYTECH Oil Machine S9S", 42999, "https://images.pexels.com/photos/4483775/pexels-photo-4483775.jpeg?auto=compress&cs=tinysrgb&w=400", "", 4.6),
-        ("HEAVYTECH Oil Machine K28S", 39999, "https://images.pexels.com/photos/2933244/pexels-photo-2933244.jpeg?auto=compress&cs=tinysrgb&w=400", "", 4.5),
-        ("HEAVYTECH Oil Machine K18", 35999, "https://images.pexels.com/photos/4483609/pexels-photo-4483609.jpeg?auto=compress&cs=tinysrgb&w=400", "", 4.7),
-        ("HEAVYTECH Oil Machine T6", 28999, "https://images.pexels.com/photos/3735157/pexels-photo-3735157.jpeg?auto=compress&cs=tinysrgb&w=400", "Premium", 4.9),
-    ]),
-    ("agriculture", "Agriculture", []),
-    ("water-pumps", "Water Pumps", []),
-    ("industrial", "Industrial", []),
     (
         "electronics",
         "Electronics",
@@ -163,7 +307,6 @@ SEED = [
             ("Python Programming Guide", 499, "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&w=400", "", 4.7),
         ],
     ),
-    ("spare-parts", "Spare Parts", []),
 ]
 
 BANNER_SEED = [
@@ -200,6 +343,59 @@ def _unpack_product_row(row):
     return row[0], row[1], row[2], row[3], row[4], []
 
 
+def demographics_for(category_slug, title):
+    """Match migration 0006 logic for storefront filters."""
+    name_l = (title or "").lower()
+    age, gen, col, brand = [], [], [], ""
+
+    if category_slug in ("fashion", "clothes"):
+        if "kids" in name_l or name_l.startswith("kid "):
+            age = ["kids"]
+            gen = ["boys", "girls"]
+        elif any(
+            x in name_l
+            for x in ("women", "ladies", "kurti", "floral", "summer top", "embroidered")
+        ):
+            age = ["teens", "young_adults", "adults"]
+            gen = ["women"]
+        elif any(x in name_l for x in ("men's", "men ", "shirt", "jeans", "formal")):
+            age = ["young_adults", "adults", "mature_adults"]
+            gen = ["men"]
+        elif "unisex" in name_l or "hooded" in name_l:
+            age = ["teens", "young_adults", "adults"]
+            gen = ["unisex"]
+        else:
+            age = ["young_adults", "adults"]
+            gen = ["men", "women"]
+        col = ["navy"] if any(x in name_l for x in ("blue", "denim", "dark")) else ["black"]
+        brand = "UrbanFit"
+    elif category_slug == "beauty":
+        age = ["teens", "young_adults", "adults", "mature_adults"]
+        gen = ["women", "men", "unisex"]
+        col = ["white"]
+        brand = "GlowCare"
+    elif category_slug == "electronics":
+        gen = ["unisex"]
+        col = ["black"]
+        brand = "TechLine"
+    elif category_slug in SHOE_CATEGORY_SLUGS:
+        age = ["young_adults", "adults"]
+        gen = ["men", "women", "unisex"]
+        col = ["black"]
+        brand = "Stride"
+    else:
+        gen = ["unisex"]
+        col = ["beige"]
+        brand = "GoldyMart"
+
+    return {
+        "age_groups": age,
+        "genders": gen,
+        "brand": brand,
+        "colors": col,
+    }
+
+
 class Command(BaseCommand):
     help = "Create categories and sample products (idempotent; updates size variants on re-run)."
 
@@ -212,6 +408,7 @@ class Command(BaseCommand):
                 title, amount, image, badge, rating, raw_variants = _unpack_product_row(row)
                 variants = normalize_size_variants(raw_variants)
                 stock = sum(v["stock"] for v in variants) if variants else DEFAULT_STOCK
+                demo = demographics_for(slug, title)
                 obj, was_created = Product.objects.update_or_create(
                     category=cat,
                     name=title,
@@ -222,12 +419,47 @@ class Command(BaseCommand):
                         "badge": badge,
                         "rating": Decimal(str(rating)),
                         "size_variants": variants,
+                        **demo,
                     },
                 )
                 if was_created:
                     created += 1
                 else:
                     updated += 1
+
+        for slug in SHOE_CATEGORY_SLUGS:
+            Category.objects.get_or_create(
+                slug=slug,
+                defaults={"name": slug.replace("-", " ").title()},
+            )
+
+        shoe_created = 0
+        shoe_updated = 0
+        for row in SHOE_SEED:
+            cat = Category.objects.get(slug=row["slug"])
+            variants = normalize_size_variants(UK_SIZES_FULL)
+            stock = sum(v["stock"] for v in variants)
+            obj, was_created = Product.objects.update_or_create(
+                category=cat,
+                name=row["name"],
+                defaults={
+                    "price": Decimal(str(row["price"])),
+                    "stock": stock,
+                    "image": row["image"],
+                    "badge": row.get("badge") or "",
+                    "rating": Decimal(str(row["rating"])),
+                    "size_variants": variants,
+                    "age_groups": row.get("age_groups") or [],
+                    "genders": row.get("genders") or [],
+                    "brand": row.get("brand") or "",
+                    "colors": row.get("colors") or [],
+                    "discount_percent": int(row.get("discount_percent") or 0),
+                },
+            )
+            if was_created:
+                shoe_created += 1
+            else:
+                shoe_updated += 1
 
         banners_created = 0
         for title, desc, image, link, grad, order in BANNER_SEED:
@@ -247,6 +479,8 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Done. New products: {created}, updated: {updated}, new banners: {banners_created}"
+                f"Done. New products: {created}, updated: {updated}; "
+                f"footwear new: {shoe_created}, updated: {shoe_updated}; "
+                f"new banners: {banners_created}"
             )
         )

@@ -118,7 +118,7 @@ const Services = () => {
             Join as a HeavyTech Dealer
           </h3>
           <p className="text-white/80 mb-6 max-w-xl mx-auto">
-            Begin a fulfilling journey in contributing to sustainable agriculture in your community. 
+            Begin a fulfilling journey helping customers discover great products in your community. 
             Be part of a network committed to transforming farming practices across the nation.
           </p>
           <button className="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105">

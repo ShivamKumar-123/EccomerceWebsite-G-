@@ -21,6 +21,7 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
+import { AGE_GROUP_OPTIONS, GENDER_OPTIONS, PRESET_COLORS } from '../lib/productFilterConstants';
 
 // Analytics Dashboard Component
 const AnalyticsDashboard = ({ orders = [], products = [], users = [] }) => {
@@ -515,7 +516,7 @@ const AdminDashboard = () => {
       return;
     }
     try {
-      const rows = await productsApi.listProducts({ admin: true });
+      const rows = await productsApi.listAllAdminProducts();
       setProducts(Array.isArray(rows) ? rows : []);
     } catch (e) {
       console.error('Error loading products from API:', e);
@@ -708,11 +709,16 @@ const AdminDashboard = () => {
     setEditingProduct({
       id: Date.now(),
       name: '',
-      category: 'rice-mills',
+      category: 'electronics',
       price: '',
       stock: 0,
-      image: 'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&w=400',
       sizeVariants: [],
+      ageGroups: [],
+      genders: [],
+      brand: '',
+      colors: [],
+      discountPercent: 0,
     });
     setShowProductModal(true);
   };
@@ -725,7 +731,18 @@ const AdminDashboard = () => {
           stock: Math.max(0, Number(v.stock) || 0),
         }))
       : [];
-    setEditingProduct({ ...product, sizeVariants });
+    const ageGroups = product.ageGroups || product.age_groups || [];
+    const genders = product.genders || [];
+    const colors = product.colors || [];
+    setEditingProduct({
+      ...product,
+      sizeVariants,
+      ageGroups: Array.isArray(ageGroups) ? ageGroups : [],
+      genders: Array.isArray(genders) ? genders : [],
+      brand: product.brand || '',
+      colors: Array.isArray(colors) ? colors : [],
+      discountPercent: Number(product.discountPercent ?? product.discount_percent ?? 0) || 0,
+    });
     setShowProductModal(true);
   };
 
@@ -756,6 +773,11 @@ const AdminDashboard = () => {
         rating: Number(editingProduct.rating) || 4.5,
         is_active: editingProduct.is_active !== false && editingProduct.isActive !== false,
         sizeVariants,
+        ageGroups: Array.isArray(editingProduct.ageGroups) ? editingProduct.ageGroups : [],
+        genders: Array.isArray(editingProduct.genders) ? editingProduct.genders : [],
+        brand: String(editingProduct.brand || '').trim(),
+        colors: Array.isArray(editingProduct.colors) ? editingProduct.colors : [],
+        discountPercent: Math.max(0, Math.min(100, Number(editingProduct.discountPercent) || 0)),
       };
       const existsInList = products.some((p) => String(p.id) === String(editingProduct.id));
       if (existsInList) {
@@ -2369,11 +2391,6 @@ const AdminDashboard = () => {
                   onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <option value="rice-mills">Rice Mills</option>
-                  <option value="food-processing">Food Processing</option>
-                  <option value="agriculture">Agriculture</option>
-                  <option value="water-pumps">Water Pumps</option>
-                  <option value="industrial">Industrial</option>
                   <option value="electronics">Electronics</option>
                   <option value="fashion">Fashion</option>
                   <option value="clothes">Clothing &amp; Apparel</option>
@@ -2381,7 +2398,12 @@ const AdminDashboard = () => {
                   <option value="beauty">Beauty &amp; Care</option>
                   <option value="sports">Sports &amp; Fitness</option>
                   <option value="books">Books</option>
-                  <option value="spare-parts">Spare Parts</option>
+                  <option value="sneakers">Sneakers</option>
+                  <option value="sports-shoes">Sports Shoes</option>
+                  <option value="casual-shoes">Casual Shoes</option>
+                  <option value="formal-shoes">Formal Shoes</option>
+                  <option value="boots">Boots</option>
+                  <option value="sandals">Sandals</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -2437,6 +2459,27 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Discount % (0–100)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={editingProduct.discountPercent ?? 0}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      discountPercent: Math.max(0, Math.min(100, parseInt(e.target.value, 10) || 0)),
+                    })
+                  }
+                  className="w-full max-w-xs px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Shown on /shoes filters &amp; product cards; sale price is still the Price field above.
+                </p>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image URL</label>
                 <input
                   type="text"
@@ -2444,6 +2487,89 @@ const AdminDashboard = () => {
                   onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
+              </div>
+
+              <div className="rounded-xl border border-gray-200 dark:border-gray-600 p-4 space-y-3 bg-gray-50 dark:bg-gray-800/50">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Storefront filters (age, gender, brand, color)</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Used on the products page sidebar. Leave age/gender empty so the item matches any selection on that axis.
+                </p>
+                <div>
+                  <span className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Age groups</span>
+                  <div className="flex flex-wrap gap-2">
+                    {AGE_GROUP_OPTIONS.map((o) => (
+                      <label key={o.id} className="inline-flex items-center gap-1.5 text-xs text-gray-800 dark:text-gray-200">
+                        <input
+                          type="checkbox"
+                          checked={(editingProduct.ageGroups || []).includes(o.id)}
+                          onChange={(e) => {
+                            const cur = editingProduct.ageGroups || [];
+                            const next = e.target.checked
+                              ? [...new Set([...cur, o.id])]
+                              : cur.filter((x) => x !== o.id);
+                            setEditingProduct({ ...editingProduct, ageGroups: next });
+                          }}
+                          className="rounded border-gray-300 dark:border-gray-600"
+                        />
+                        {o.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Gender</span>
+                  <div className="flex flex-wrap gap-2">
+                    {GENDER_OPTIONS.map((o) => (
+                      <label key={o.id} className="inline-flex items-center gap-1.5 text-xs text-gray-800 dark:text-gray-200">
+                        <input
+                          type="checkbox"
+                          checked={(editingProduct.genders || []).includes(o.id)}
+                          onChange={(e) => {
+                            const cur = editingProduct.genders || [];
+                            const next = e.target.checked
+                              ? [...new Set([...cur, o.id])]
+                              : cur.filter((x) => x !== o.id);
+                            setEditingProduct({ ...editingProduct, genders: next });
+                          }}
+                          className="rounded border-gray-300 dark:border-gray-600"
+                        />
+                        {o.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Brand</label>
+                  <input
+                    type="text"
+                    value={editingProduct.brand ?? ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, brand: e.target.value })}
+                    placeholder="e.g. Nike"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Colors</span>
+                  <div className="flex flex-wrap gap-2">
+                    {PRESET_COLORS.map((o) => (
+                      <label key={o.id} className="inline-flex items-center gap-1.5 text-xs text-gray-800 dark:text-gray-200">
+                        <input
+                          type="checkbox"
+                          checked={(editingProduct.colors || []).includes(o.id)}
+                          onChange={(e) => {
+                            const cur = editingProduct.colors || [];
+                            const next = e.target.checked
+                              ? [...new Set([...cur, o.id])]
+                              : cur.filter((x) => x !== o.id);
+                            setEditingProduct({ ...editingProduct, colors: next });
+                          }}
+                          className="rounded border-gray-300 dark:border-gray-600"
+                        />
+                        {o.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="rounded-xl border border-gray-200 dark:border-gray-600 p-4 space-y-3 bg-gray-50 dark:bg-gray-800/50">

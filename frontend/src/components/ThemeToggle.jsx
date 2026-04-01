@@ -7,9 +7,9 @@ export default function ThemeToggle({ className = '', scrolled = true }) {
   const isDark = theme === 'dark';
 
   const base =
-    'p-2 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ' +
+    'p-2 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 ' +
     (scrolled
-      ? 'text-slate-700 hover:bg-slate-200/90 dark:text-slate-200 dark:hover:bg-white/10'
+      ? 'text-stone-700 hover:bg-stone-200/90 dark:text-stone-200 dark:hover:bg-white/10'
       : 'text-white hover:bg-white/15 dark:text-white dark:hover:bg-white/10');
 
   return (

@@ -39,7 +39,7 @@ const BlogPage = () => {
     {
       id: 3,
       title: 'Empowering Women in Agriculture: HeavyTech\'s Inclusive Approach',
-      excerpt: 'How HeavyTech is making agriculture accessible and empowering women farmers across rural India.',
+      excerpt: 'How we make quality products accessible and support shoppers and sellers across India.',
       category: 'Success Stories',
       date: 'August 21, 2023',
       readTime: '6 min read',
@@ -49,8 +49,8 @@ const BlogPage = () => {
     },
     {
       id: 4,
-      title: 'Top 10 Tips for Maximizing Rice Mill Efficiency',
-      excerpt: 'Expert tips to get the most out of your rice milling equipment and increase your processing capacity.',
+      title: 'Top 10 Tips for Smarter Online Shopping',
+      excerpt: 'Expert tips to compare products, read reviews, and get the best value on every order.',
       category: 'Farming Tips',
       date: 'August 21, 2023',
       readTime: '8 min read',
@@ -60,8 +60,8 @@ const BlogPage = () => {
     },
     {
       id: 5,
-      title: 'Sustainable Farming Practices: HeavyTech\'s Contribution',
-      excerpt: 'Our commitment to eco-friendly agriculture and sustainable farming solutions for a greener future.',
+      title: 'Greener Choices: Shopping More Sustainably',
+      excerpt: 'Our commitment to eco-friendly packaging, responsible brands, and a lighter footprint.',
       category: 'Sustainability',
       date: 'August 21, 2023',
       readTime: '5 min read',
@@ -71,8 +71,8 @@ const BlogPage = () => {
     },
     {
       id: 6,
-      title: 'The Evolution of Agricultural Machinery: From Tradition to Innovation',
-      excerpt: 'A journey through the transformation of farming equipment over the decades and what the future holds.',
+      title: 'How E‑commerce Keeps Evolving',
+      excerpt: 'A quick look at how online retail has changed—and what shoppers can expect next.',
       category: 'Technology',
       date: 'August 21, 2023',
       readTime: '10 min read',
@@ -82,8 +82,8 @@ const BlogPage = () => {
     },
     {
       id: 7,
-      title: 'The Importance of Safety Measures When Operating Farming Machinery',
-      excerpt: 'Essential safety guidelines every farmer should follow when operating agricultural equipment.',
+      title: 'Safe Delivery & Unboxing Tips',
+      excerpt: 'Simple checks to make sure your orders arrive safely and you get what you paid for.',
       category: 'Farming Tips',
       date: 'August 21, 2023',
       readTime: '6 min read',
@@ -93,8 +93,8 @@ const BlogPage = () => {
     },
     {
       id: 8,
-      title: 'How to Maintain and Extend the Lifespan of Your Farming Equipment',
-      excerpt: 'Practical maintenance tips to keep your machinery running efficiently for years to come.',
+      title: 'Caring for Electronics & Appliances You Buy Online',
+      excerpt: 'Practical tips to keep gadgets and home products working well for years.',
       category: 'Farming Tips',
       date: 'February 20, 2023',
       readTime: '7 min read',
@@ -138,7 +138,7 @@ const BlogPage = () => {
               Latest <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">News & Insights</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-1">
-              Stay updated with the latest news, tips, and insights from the world of agriculture and machinery
+              Stay updated with shopping tips, deals, and stories from GoldyMart
             </p>
           </div>
         </div>
