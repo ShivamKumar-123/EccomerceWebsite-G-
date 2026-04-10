@@ -58,7 +58,7 @@ def apply_category_filters(qs, request):
 
 
 def apply_discount_filters(qs, request):
-    """discounts=10,25 → product matches if discount_percent meets any threshold (OR)."""
+    """discounts=10,25 → product matches if offer or sale % meets any threshold (OR)."""
     raw = split_multi_params(request, "discount", alt_key="discounts")
     thresholds: list[int] = []
     for x in raw:
@@ -72,7 +72,7 @@ def apply_discount_filters(qs, request):
         return qs
     q = Q()
     for t in thresholds:
-        q |= Q(discount_percent__gte=t)
+        q |= Q(offer_discount_percent__gte=t) | Q(sale_discount_percent__gte=t)
     return qs.filter(q)
 
 

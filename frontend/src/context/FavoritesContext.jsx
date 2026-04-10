@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { effectiveSizeVariantsForProduct } from '../lib/productSizeDefaults';
 
-const FavoritesContext = createContext();
+const FavoritesContext = createContext(null);
 
-const FAV_KEY = 'heavytech_favorites';
+const FAV_KEY = 'goldymart_favorites';
 
 function readFavorites() {
   try {
@@ -27,7 +28,7 @@ function writeFavorites(rows) {
 
 function snapshotFromProduct(product) {
   if (!product?.id) return null;
-  return {
+  const base = {
     id: product.id,
     name: product.name,
     price: product.price,
@@ -37,9 +38,11 @@ function snapshotFromProduct(product) {
     rating: product.rating != null ? Number(product.rating) : 4.5,
     sizeVariants: product.sizeVariants || product.size_variants || [],
   };
+  base.sizeVariants = effectiveSizeVariantsForProduct(base);
+  return base;
 }
 
-export function useFavorites() {
+function useFavorites() {
   const ctx = useContext(FavoritesContext);
   if (!ctx) {
     throw new Error('useFavorites must be used within FavoritesProvider');
@@ -47,12 +50,12 @@ export function useFavorites() {
   return ctx;
 }
 
-export function FavoritesProvider({ children }) {
+function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState(() => readFavorites());
 
   useEffect(() => {
     writeFavorites(favorites);
-    window.dispatchEvent(new Event('heavytech-favorites-updated'));
+    window.dispatchEvent(new Event('goldymart-favorites-updated'));
   }, [favorites]);
 
   const toggleFavorite = useCallback((product) => {
@@ -87,3 +90,5 @@ export function FavoritesProvider({ children }) {
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
 }
+
+export { useFavorites, FavoritesProvider };

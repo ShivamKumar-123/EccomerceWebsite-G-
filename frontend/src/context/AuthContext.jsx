@@ -3,7 +3,7 @@ import { canCallApi, getDrfToken, setBackendConfig, clearStoredJwtTokens } from 
 
 const AuthContext = createContext();
 
-const ADMIN_SESSION_KEY = 'heavytech_admin_session';
+const ADMIN_SESSION_KEY = 'goldymart_admin_session';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -11,12 +11,6 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
-
-const DEFAULT_ADMIN = {
-  username: 'admin',
-  password: 'admin123',
-  name: 'Administrator',
 };
 
 export const AuthProvider = ({ children }) => {
@@ -42,12 +36,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    const storedAdmin = localStorage.getItem('heavytech_admin');
-    if (!storedAdmin) {
-      localStorage.setItem('heavytech_admin', JSON.stringify(DEFAULT_ADMIN));
-    }
-
-    const session = localStorage.getItem('heavytech_session');
+    const session = localStorage.getItem('goldymart_session');
     if (session) {
       try {
         const sessionData = JSON.parse(session);
@@ -69,7 +58,19 @@ export const AuthProvider = ({ children }) => {
         error: 'Use your Django superuser login — the app uses the API for admin access.',
       };
     }
-    const storedAdmin = JSON.parse(localStorage.getItem('heavytech_admin'));
+    const raw = localStorage.getItem('goldymart_admin');
+    if (!raw) {
+      return { success: false, error: 'Invalid username or password' };
+    }
+    let storedAdmin;
+    try {
+      storedAdmin = JSON.parse(raw);
+    } catch {
+      return { success: false, error: 'Invalid username or password' };
+    }
+    if (!storedAdmin?.username || storedAdmin.password == null) {
+      return { success: false, error: 'Invalid username or password' };
+    }
 
     if (username === storedAdmin.username && password === storedAdmin.password) {
       const sessionData = {
@@ -77,7 +78,7 @@ export const AuthProvider = ({ children }) => {
         admin: { username: storedAdmin.username, name: storedAdmin.name },
         loginTime: new Date().toISOString(),
       };
-      localStorage.setItem('heavytech_session', JSON.stringify(sessionData));
+      localStorage.setItem('goldymart_session', JSON.stringify(sessionData));
       setIsAuthenticated(true);
       setAdmin(sessionData.admin);
       return { success: true };
@@ -102,7 +103,7 @@ export const AuthProvider = ({ children }) => {
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
     }
-    localStorage.removeItem('heavytech_session');
+    localStorage.removeItem('goldymart_session');
     clearStoredJwtTokens();
     if (import.meta.env.VITE_API_URL) {
       setBackendConfig(undefined, null, null);
@@ -117,10 +118,10 @@ export const AuthProvider = ({ children }) => {
       password: newPassword,
       name: newName,
     };
-    localStorage.setItem('heavytech_admin', JSON.stringify(updatedAdmin));
+    localStorage.setItem('goldymart_admin', JSON.stringify(updatedAdmin));
 
     try {
-      const session = localStorage.getItem('heavytech_session');
+      const session = localStorage.getItem('goldymart_session');
       if (session) {
         const sessionData = JSON.parse(session);
         if (sessionData.isLoggedIn) {
@@ -129,7 +130,7 @@ export const AuthProvider = ({ children }) => {
             admin: { username: newUsername, name: newName || 'Administrator' },
             loginTime: new Date().toISOString(),
           };
-          localStorage.setItem('heavytech_session', JSON.stringify(next));
+          localStorage.setItem('goldymart_session', JSON.stringify(next));
           setAdmin(next.admin);
         }
       }

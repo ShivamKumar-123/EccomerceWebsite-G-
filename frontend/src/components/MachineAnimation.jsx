@@ -88,7 +88,7 @@ const MachineAnimation = () => {
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-green-400 rounded-full opacity-50"
+            className="absolute w-1 h-1 bg-primary-400 rounded-full opacity-50"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -155,7 +155,7 @@ const MachineAnimation = () => {
           {/* Buttons */}
           <circle cx="260" cy="330" r="12" fill="#ef4444" filter="url(#glow)" />
           <circle cx="300" cy="330" r="12" fill="#10b981" filter="url(#glow)" />
-          <circle cx="340" cy="330" r="12" fill="#3b82f6" filter="url(#glow)" />
+          <circle cx="340" cy="330" r="12" fill="#B87444" filter="url(#glow)" />
           
           {/* Output Chute */}
           <path d="M 400 300 L 450 300 L 480 350 L 520 350 L 520 400 L 400 400 Z" fill="url(#metalGradient)" />
@@ -275,12 +275,12 @@ const MachineAnimation = () => {
       </svg>
 
       {/* Glowing Orbs */}
-      <div className="absolute top-10 right-10 w-20 h-20 bg-green-500 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-20 left-20 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-10 right-10 w-20 h-20 bg-primary-500 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-20 left-20 w-32 h-32 bg-primary-500 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
 
       {/* Text Overlay */}
       <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 text-white">
-        <h3 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+        <h3 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary-400 to-primary-500 bg-clip-text text-transparent">
           Advanced Machinery
         </h3>
         <p className="text-gray-400 text-xs sm:text-sm mt-1">Precision Engineering at Work</p>
@@ -289,8 +289,8 @@ const MachineAnimation = () => {
       {/* Status Indicators */}
       <div className="absolute top-4 sm:top-8 right-4 sm:right-8 flex items-center gap-2 sm:gap-4">
         <div className="flex items-center gap-1 sm:gap-2">
-          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-green-400 text-xs sm:text-sm font-medium">Online</span>
+          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-primary-500 rounded-full animate-pulse"></div>
+          <span className="text-primary-400 text-xs sm:text-sm font-medium">Online</span>
         </div>
         <div className="hidden sm:flex items-center gap-2">
           <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>

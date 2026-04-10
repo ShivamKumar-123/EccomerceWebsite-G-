@@ -11,8 +11,8 @@ const SEOHead = ({
   useEffect(() => {
     // Update document title
     const fullTitle = title 
-      ? `${title} | HeavyTech Machinery` 
-      : "HeavyTech Machinery - India's #1 Agricultural & Food Processing Equipment";
+      ? `${title} | Goldy Mart` 
+      : "Goldy Mart - India's #1 Agricultural & Food Processing Equipment";
     document.title = fullTitle;
 
     // Update meta description

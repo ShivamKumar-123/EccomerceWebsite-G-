@@ -21,16 +21,24 @@ export function normalizeSiteSection(row) {
   };
 }
 
-/** Public: active sections (optionally by placement). */
+/** Public: active sections (optionally by placement). Returns [] on failure so the home page still renders. */
 export async function listSiteSectionsPublic(opts = {}) {
-  if (!canCallApi()) throw new Error('API URL not configured');
-  const params = new URLSearchParams();
-  if (opts.placement) params.set('placement', String(opts.placement).trim());
-  const q = params.toString();
-  const r = await fetch(apiUrl('/api/site-sections/', q));
-  if (!r.ok) throw new Error(`Site sections failed (${r.status})`);
-  const data = await r.json();
-  return parseList(data).map(normalizeSiteSection).filter((s) => s.active);
+  if (!canCallApi()) return [];
+  try {
+    const params = new URLSearchParams();
+    if (opts.placement) params.set('placement', String(opts.placement).trim());
+    const q = params.toString();
+    const r = await fetch(apiUrl('/api/site-sections/', q));
+    if (!r.ok) {
+      if (import.meta.env.DEV) console.warn(`[site-sections] ${r.status}`);
+      return [];
+    }
+    const data = await r.json();
+    return parseList(data).map(normalizeSiteSection).filter((s) => s.active);
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn('[site-sections] fetch failed', e);
+    return [];
+  }
 }
 
 /** Admin: all sections (JWT). */

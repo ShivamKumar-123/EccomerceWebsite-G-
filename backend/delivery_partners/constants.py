@@ -1,0 +1,1 @@
+DELIVERY_PARTNER_GROUP_NAME = "Delivery Partner"

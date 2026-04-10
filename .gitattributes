@@ -1,0 +1,2 @@
+# Consistent LF in repo; avoids Windows CRLF churn
+* text=auto eol=lf

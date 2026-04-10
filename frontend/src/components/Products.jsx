@@ -120,7 +120,7 @@ const Products = () => {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <button className="bg-primary hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 inline-flex items-center space-x-2">
+          <button className="bg-primary hover:bg-primary-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 inline-flex items-center space-x-2">
             <span>View All Products</span>
             <ArrowRight size={20} />
           </button>

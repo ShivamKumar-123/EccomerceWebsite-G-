@@ -88,10 +88,10 @@ const Services = () => {
         <div className="service-header text-center mb-16">
           <span className="text-secondary font-semibold text-sm uppercase tracking-wider">Our Services</span>
           <h2 className="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">
-            Sustainability with <span className="text-secondary">HeavyTech</span>
+            Sustainability with <span className="text-secondary">Goldy Mart</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            At HeavyTech, we intertwine efficiency and environmental responsibility in every machine. 
+            At Goldy Mart, we intertwine efficiency and environmental responsibility in every machine. 
             Our accessible and user-friendly technology makes for a greener, more productive future.
           </p>
         </div>
@@ -103,7 +103,7 @@ const Services = () => {
               key={idx} 
               className="service-card group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-primary to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary-800 to-secondary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <service.icon className="text-white" size={28} />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
@@ -113,9 +113,9 @@ const Services = () => {
         </div>
 
         {/* CTA Banner */}
-        <div className="mt-16 bg-gradient-to-r from-primary to-green-600 rounded-2xl p-8 md:p-12 text-center">
+        <div className="mt-16 bg-gradient-to-r from-primary-800 to-secondary-600 rounded-2xl p-8 md:p-12 text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Join as a HeavyTech Dealer
+            Join as a Goldy Mart Dealer
           </h3>
           <p className="text-white/80 mb-6 max-w-xl mx-auto">
             Begin a fulfilling journey helping customers discover great products in your community. 

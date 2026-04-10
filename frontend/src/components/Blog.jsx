@@ -10,7 +10,7 @@ const Blog = () => {
 
   const blogs = [
     {
-      title: 'Success Stories: How Farmers Achieved Record Yields with HeavyTech',
+      title: 'Success Stories: How Farmers Achieved Record Yields with Goldy Mart',
       category: 'Agricultural Success Stories',
       date: 'August 21, 2023',
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&h=250&fit=crop',
@@ -24,7 +24,7 @@ const Blog = () => {
       excerpt: 'Learn about modern precision farming techniques that maximize your agricultural output.'
     },
     {
-      title: 'Empowering Women in Agriculture: HeavyTech\'s Inclusive Approach',
+      title: 'Empowering Women in Agriculture: Goldy Mart\'s Inclusive Approach',
       category: 'Agricultural Empowerment',
       date: 'August 21, 2023',
       image: 'https://images.unsplash.com/photo-1594771804886-a933bb2d609b?w=400&h=250&fit=crop',
@@ -38,7 +38,7 @@ const Blog = () => {
       excerpt: 'Expert tips to get the most out of your rice milling equipment.'
     },
     {
-      title: 'Sustainable Farming Practices: HeavyTech\'s Contribution',
+      title: 'Sustainable Farming Practices: Goldy Mart\'s Contribution',
       category: 'Sustainable Agriculture',
       date: 'August 21, 2023',
       image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=250&fit=crop',
@@ -142,7 +142,7 @@ const Blog = () => {
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <button className="bg-primary hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 inline-flex items-center space-x-2">
+          <button className="bg-primary hover:bg-primary-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all transform hover:scale-105 inline-flex items-center space-x-2">
             <span>View All Articles</span>
             <ArrowRight size={20} />
           </button>

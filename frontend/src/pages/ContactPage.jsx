@@ -40,25 +40,25 @@ const ContactPage = () => {
   }, []);
 
   const contactInfo = [
-    { icon: MapPin, title: 'Visit Us', info: 'O2 Business Center, Ring Road no.2, Bhanpuri, Raipur, Chhattisgarh, India', color: 'from-blue-500 to-indigo-600' },
-    { icon: Phone, title: 'Call Us', info: '1800-309-0470 (Toll Free)\n+91 9000004724\n+91 9755105150', color: 'from-green-500 to-emerald-600' },
-    { icon: Mail, title: 'Email Us', info: 'info@heavytechmachinery.com', color: 'from-purple-500 to-pink-600' },
+    { icon: MapPin, title: 'Visit Us', info: 'O2 Business Center, Ring Road no.2, Bhanpuri, Raipur, Chhattisgarh, India', color: 'from-secondary-500 to-secondary-700' },
+    { icon: Phone, title: 'Call Us', info: '1800-309-0470 (Toll Free)\n+91 9000004724\n+91 9755105150', color: 'from-primary-500 to-primary-600' },
+    { icon: Mail, title: 'Email Us', info: 'info@goldymart.com', color: 'from-purple-500 to-pink-600' },
     { icon: Clock, title: 'Business Hours', info: 'Mon - Sat: 9:00 AM - 6:00 PM\nSunday: Closed', color: 'from-orange-500 to-red-600' },
   ];
 
   return (
     <div ref={pageRef} className="overflow-hidden">
       <SEOHead 
-        title="Contact Us - Get in Touch with HeavyTech Machinery"
-        description="Contact HeavyTech Machinery for agricultural equipment inquiries. Call 1800-309-0470 (Toll Free) or visit our office in Raipur, Chhattisgarh. 24/7 customer support."
-        keywords="contact heavytech, agricultural machinery dealer, rice mill dealer contact, heavytech phone number, heavytech address"
-        url="https://www.heavytechmachinery.com/contact"
+        title="Contact Us - Get in Touch with Goldy Mart"
+        description="Contact Goldy Mart for agricultural equipment inquiries. Call 1800-309-0470 (Toll Free) or visit our office in Raipur, Chhattisgarh. 24/7 customer support."
+        keywords="contact goldy mart, agricultural machinery dealer, rice mill dealer contact, goldy mart phone number, goldy mart address"
+        url="https://www.goldymart.com/contact"
       />
       {/* Hero Section */}
       <section className="relative min-h-[50vh] bg-gradient-to-br from-[#0a2e14] via-[#1a5f2a] to-[#0d3d18] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 right-20 w-72 h-72 bg-yellow-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-green-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary-400/20 rounded-full blur-3xl"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32 w-full min-w-0">
@@ -103,7 +103,7 @@ const ContactPage = () => {
             <div className="contact-form">
               <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
                     <MessageCircle className="text-white" size={24} />
                   </div>
                   <div>
@@ -122,7 +122,7 @@ const ContactPage = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all bg-gray-50"
+                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all bg-gray-50"
                         placeholder="Your name"
                       />
                     </div>
@@ -134,7 +134,7 @@ const ContactPage = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all bg-gray-50"
+                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all bg-gray-50"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -148,7 +148,7 @@ const ContactPage = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all bg-gray-50"
+                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all bg-gray-50"
                         placeholder="+91 XXXXX XXXXX"
                       />
                     </div>
@@ -159,7 +159,7 @@ const ContactPage = () => {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all bg-gray-50"
+                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all bg-gray-50"
                       >
                         <option value="">Select a subject</option>
                         <option value="product-inquiry">Product Inquiry</option>
@@ -179,14 +179,14 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all resize-none bg-gray-50"
+                      className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all resize-none bg-gray-50"
                       placeholder="How can we help you?"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-[1.02] hover:shadow-xl hover:shadow-green-500/30 flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-primary-600 to-primary-500 text-white py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/30 flex items-center justify-center gap-2"
                   >
                     <Send size={20} />
                     Send Message
@@ -211,7 +211,7 @@ const ContactPage = () => {
               </div>
 
               {/* Social & Quick Contact */}
-              <div className="bg-gradient-to-br from-green-700 via-green-600 to-emerald-600 rounded-3xl p-8 text-white relative overflow-hidden">
+              <div className="bg-gradient-to-br from-primary-700 via-primary-600 to-primary-600 rounded-3xl p-8 text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400 rounded-full blur-3xl"></div>
                 </div>
@@ -221,13 +221,13 @@ const ContactPage = () => {
                   <p className="text-white/80 mb-6">Follow us on social media for updates, tips, and more.</p>
                   
                   <div className="flex gap-4 mb-8">
-                    <a href="https://www.facebook.com/heavytechmachinery" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
+                    <a href="https://www.facebook.com/goldymart" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
                       <Facebook size={24} />
                     </a>
-                    <a href="https://www.youtube.com/@heavytechkm" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
+                    <a href="https://www.youtube.com/@goldymart" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
                       <Youtube size={24} />
                     </a>
-                    <a href="https://www.instagram.com/heavytechmachinery/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
+                    <a href="https://www.instagram.com/goldymart/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
                       <Instagram size={24} />
                     </a>
                   </div>
@@ -240,11 +240,11 @@ const ContactPage = () => {
                         <div className="text-white/80">1800-309-0470</div>
                       </div>
                     </a>
-                    <a href="mailto:info@heavytechmachinery.com" className="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-xl p-4 transition-colors">
+                    <a href="mailto:info@goldymart.com" className="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-xl p-4 transition-colors">
                       <Mail size={20} />
                       <div>
                         <div className="font-semibold">Email</div>
-                        <div className="text-white/80">info@heavytechmachinery.com</div>
+                        <div className="text-white/80">info@goldymart.com</div>
                       </div>
                     </a>
                   </div>
@@ -259,9 +259,9 @@ const ContactPage = () => {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">FAQ</span>
+            <span className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">FAQ</span>
             <h2 className="text-3xl md:text-4xl font-black text-gray-900">
-              Frequently Asked <span className="text-green-600">Questions</span>
+              Frequently Asked <span className="text-primary-600">Questions</span>
             </h2>
           </div>
 

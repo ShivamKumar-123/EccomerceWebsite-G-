@@ -34,7 +34,7 @@ const generateOrderReport = (order) => {
 
   const reportContent = `
 ================================================================================
-                              HEAVYTECH INDIA
+                              GOLDY MART
                          ORDER INVOICE / RECEIPT
 ================================================================================
 
@@ -87,9 +87,9 @@ Payment Screenshot: ${order.paymentScreenshot ? 'Uploaded' : 'Not Uploaded'}
 ================================================================================
                           THANK YOU FOR YOUR ORDER!
 ================================================================================
-HeavyTech India - Quality Agricultural & Food Processing Machinery
-Contact: 1800-309-0470 | Email: support@heavytech.in
-Website: www.heavytech.in
+Goldy Mart - Quality Agricultural & Food Processing Machinery
+Contact: 1800-309-0470 | Email: support@goldymart.com
+Website: www.goldymart.com
 ================================================================================
 `;
 
@@ -98,7 +98,7 @@ Website: www.heavytech.in
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `HeavyTech_Order_${order.id}.txt`;
+  a.download = `GoldyMart_Order_${order.id}.txt`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -189,10 +189,10 @@ const TrackOrderPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'approved': return 'text-green-600 bg-green-100';
+      case 'approved': return 'text-primary-600 bg-primary-100';
       case 'rejected': return 'text-red-600 bg-red-100';
-      case 'shipped': return 'text-blue-600 bg-blue-100';
-      case 'delivered': return 'text-emerald-600 bg-emerald-100';
+      case 'shipped': return 'text-secondary-800 bg-secondary-100 dark:bg-secondary-900/40 dark:text-secondary-200';
+      case 'delivered': return 'text-primary-600 bg-primary-100';
       default: return 'text-yellow-600 bg-yellow-100';
     }
   };
@@ -252,7 +252,7 @@ const TrackOrderPage = () => {
       <section className="relative min-h-[40vh] bg-gradient-to-br from-[#0a2e14] via-[#1a5f2a] to-[#0d3d18] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 right-20 w-72 h-72 bg-yellow-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-green-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary-400/20 rounded-full blur-3xl"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12 sm:py-20 w-full min-w-0">
@@ -315,8 +315,8 @@ const TrackOrderPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/40 rounded-lg flex items-center justify-center shrink-0">
-                      <Calendar className="text-green-600 dark:text-green-400" size={20} />
+                    <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/40 rounded-lg flex items-center justify-center shrink-0">
+                      <Calendar className="text-primary-600 dark:text-primary-400" size={20} />
                     </div>
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">Order Date</p>
@@ -324,8 +324,8 @@ const TrackOrderPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0">
-                      <Package className="text-blue-600 dark:text-blue-400" size={20} />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary-100 dark:bg-secondary-900/40">
+                      <Package className="text-secondary-700 dark:text-secondary-300" size={20} />
                     </div>
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">Items</p>
@@ -338,7 +338,7 @@ const TrackOrderPage = () => {
                     </div>
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">Total (incl. delivery)</p>
-                      <p className="font-bold text-green-600 dark:text-green-400">
+                      <p className="font-bold text-primary-600 dark:text-primary-400">
                         {formatPrice((selectedOrder.total || 0) * 1.18 + (selectedOrder.deliveryFee || 0))}
                       </p>
                     </div>
@@ -349,7 +349,7 @@ const TrackOrderPage = () => {
               {/* Shipping & tracking */}
               <div className="track-card bg-gray-50 dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-100 dark:border-gray-800">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Truck size={22} className="text-green-600 dark:text-green-400" />
+                  <Truck size={22} className="text-primary-600 dark:text-primary-400" />
                   Delivery & tracking
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -376,6 +376,38 @@ const TrackOrderPage = () => {
                 </div>
               </div>
 
+              {/* Partner delivery proof (after delivered) */}
+              {selectedOrder.status === 'delivered' &&
+                Array.isArray(selectedOrder.deliveryProofImages) &&
+                selectedOrder.deliveryProofImages.length > 0 && (
+                  <div className="track-card bg-gray-50 dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-100 dark:border-gray-800">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                      <PackageCheck size={22} className="text-primary-600 dark:text-primary-400" />
+                      Delivery confirmation
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      Photos from our delivery partner when your order was marked delivered.
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {selectedOrder.deliveryProofImages.map((src, i) => (
+                        <a
+                          key={`${src}-${i}`}
+                          href={src}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block overflow-hidden rounded-xl border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <img
+                            src={src}
+                            alt={`Delivery confirmation ${i + 1}`}
+                            className="h-28 w-full object-cover sm:h-36"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
               {/* Tracking Timeline */}
               <div className="track-card bg-gray-50 dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-100 dark:border-gray-800">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8">Order Progress</h3>
@@ -389,7 +421,7 @@ const TrackOrderPage = () => {
                       <div key={step.id} className="relative flex items-start gap-6">
                         <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center ${
                           step.rejected ? 'bg-red-500 text-white' :
-                          step.completed ? 'bg-green-500 text-white' : 
+                          step.completed ? 'bg-primary-500 text-white' : 
                           'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
                         }`}>
                           {step.rejected ? <XCircle size={24} /> : <step.icon size={24} />}
@@ -402,14 +434,14 @@ const TrackOrderPage = () => {
                             {step.rejected ? 'Order Rejected' : step.label}
                           </p>
                           {step.current && !step.rejected && (
-                            <p className="text-green-600 text-sm mt-1">Current Status</p>
+                            <p className="text-primary-600 text-sm mt-1">Current Status</p>
                           )}
                           {step.rejected && (
                             <p className="text-red-500 text-sm mt-1">Payment verification failed. Please contact support.</p>
                           )}
                         </div>
                         {step.completed && !step.rejected && (
-                          <CheckCircle className="text-green-500 mt-2" size={20} />
+                          <CheckCircle className="text-primary-500 mt-2" size={20} />
                         )}
                       </div>
                     ))}
@@ -436,7 +468,7 @@ const TrackOrderPage = () => {
                         )}
                         <p className="text-gray-500 dark:text-gray-400 text-sm">Quantity: {item.quantity}</p>
                       </div>
-                      <p className="font-bold text-green-600 dark:text-green-400 shrink-0">{item.price}</p>
+                      <p className="font-bold text-primary-600 dark:text-primary-400 shrink-0">{item.price}</p>
                     </div>
                   ))}
                 </div>
@@ -475,14 +507,14 @@ const TrackOrderPage = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   onClick={() => generateOrderReport(selectedOrder)}
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all"
+                  className="flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all"
                 >
                   <Download size={20} />
                   Download Invoice
                 </button>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="text-green-600 dark:text-green-400 font-semibold hover:text-green-700 dark:hover:text-green-300"
+                  className="text-primary-600 dark:text-primary-400 font-semibold hover:text-primary-700 dark:hover:text-primary-300"
                 >
                   ← Track Another Order
                 </button>
@@ -512,8 +544,8 @@ const TrackOrderPage = () => {
                       >
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                           <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 dark:bg-green-900/40 rounded-xl flex items-center justify-center shrink-0">
-                              <Package className="text-green-600 dark:text-green-400" size={28} />
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary-100 dark:bg-primary-900/40 rounded-xl flex items-center justify-center shrink-0">
+                              <Package className="text-primary-600 dark:text-primary-400" size={28} />
                             </div>
                             <div className="min-w-0">
                               <p className="font-bold text-gray-900 dark:text-white">Order #{order.id.slice(-8)}</p>
@@ -525,7 +557,7 @@ const TrackOrderPage = () => {
                               {getStatusIcon(order.status)}
                               <span className="font-medium">{getStatusText(order.status)}</span>
                             </div>
-                            <p className="font-bold text-green-600 dark:text-green-400">
+                            <p className="font-bold text-primary-600 dark:text-primary-400">
                               {formatPrice((order.total || 0) * 1.18 + (order.deliveryFee || 0))}
                             </p>
                             <ArrowRight className="text-gray-400 dark:text-gray-500 hidden sm:block" size={20} />
@@ -550,28 +582,28 @@ const TrackOrderPage = () => {
                     <h4 className="font-bold text-gray-900 mb-4 text-center">How to Place an Order</h4>
                     <div className="space-y-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                        <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
                         <div>
                           <p className="font-semibold text-gray-900">Browse Products</p>
                           <p className="text-gray-600 text-sm">Go to Products page and add items to your cart</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                        <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
                         <div>
                           <p className="font-semibold text-gray-900">Checkout</p>
                           <p className="text-gray-600 text-sm">Fill your delivery address and contact details</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                        <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
                         <div>
                           <p className="font-semibold text-gray-900">Pay via UPI</p>
                           <p className="text-gray-600 text-sm">Scan QR code, make payment and upload screenshot</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                        <div className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
                         <div>
                           <p className="font-semibold text-gray-900">Track Order</p>
                           <p className="text-gray-600 text-sm">Come back here to track your order status</p>
@@ -582,7 +614,7 @@ const TrackOrderPage = () => {
 
                   <Link
                     to="/products"
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:shadow-xl transition-all hover:scale-105"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white px-8 py-4 rounded-full font-bold hover:shadow-xl transition-all hover:scale-105"
                   >
                     Start Shopping
                     <ArrowRight size={20} />
@@ -604,14 +636,14 @@ const TrackOrderPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:18003090470"
-              className="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border-2 border-green-600 text-green-600 dark:text-green-400 px-6 py-3 rounded-full font-semibold hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border-2 border-primary-600 text-primary-600 dark:text-primary-400 px-6 py-3 rounded-full font-semibold hover:bg-primary-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Phone size={20} />
               1800-309-0470
             </a>
             <a
-              href="mailto:support@heavytechmachinery.com"
-              className="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border-2 border-green-600 text-green-600 dark:text-green-400 px-6 py-3 rounded-full font-semibold hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"
+              href="mailto:support@goldymart.com"
+              className="inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border-2 border-primary-600 text-primary-600 dark:text-primary-400 px-6 py-3 rounded-full font-semibold hover:bg-primary-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Mail size={20} />
               Email Support

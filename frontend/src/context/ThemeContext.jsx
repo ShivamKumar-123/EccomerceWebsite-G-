@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-const STORAGE_KEY = 'heavytech_theme';
+const STORAGE_KEY = 'goldymart_theme';
 
 const ThemeContext = createContext(null);
 
@@ -9,7 +9,6 @@ export function ThemeProvider({ children }) {
     if (typeof window === 'undefined') return 'light';
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === 'dark' || saved === 'light') return saved;
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
     return 'light';
   });
 
@@ -18,6 +17,8 @@ export function ThemeProvider({ children }) {
     if (theme === 'dark') root.classList.add('dark');
     else root.classList.remove('dark');
     localStorage.setItem(STORAGE_KEY, theme);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#1C1917' : '#F8F7F5');
   }, [theme]);
 
   const setTheme = (t) => setThemeState(t === 'dark' ? 'dark' : 'light');

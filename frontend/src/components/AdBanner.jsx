@@ -30,8 +30,8 @@ const AdBanner = () => {
   useEffect(() => {
     load();
     const onUpd = () => load();
-    window.addEventListener('heavytech-ads-updated', onUpd);
-    return () => window.removeEventListener('heavytech-ads-updated', onUpd);
+    window.addEventListener('goldymart-ads-updated', onUpd);
+    return () => window.removeEventListener('goldymart-ads-updated', onUpd);
   }, [load]);
 
   useEffect(() => {
@@ -63,12 +63,12 @@ const AdBanner = () => {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className={`relative bg-gradient-to-r ${ad.bgColor || 'from-emerald-800 to-emerald-950'} py-10 sm:py-14 lg:py-16`}>
+      <div className={`relative bg-gradient-to-r ${ad.bgColor || 'from-primary-800 to-primary-950'} py-10 sm:py-14 lg:py-16`}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_50%)] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative w-full min-w-0">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
             <div className="text-center lg:text-left flex-1 w-full min-w-0 rounded-2xl border border-stone-200/90 bg-white/92 p-6 sm:p-8 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-stone-950/80 dark:shadow-stone-950/40">
-              <div className="inline-block bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide dark:bg-white/15 dark:text-white">
+              <div className="inline-block bg-primary-100 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide dark:bg-white/15 dark:text-white">
                 Featured
               </div>
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-3 text-stone-900 dark:text-white drop-shadow-none">
@@ -80,7 +80,7 @@ const AdBanner = () => {
               {isInternal ? (
                 <Link
                   to={link}
-                  className="inline-flex items-center gap-2 bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:bg-emerald-600 transition-colors dark:bg-white dark:text-emerald-900 dark:shadow-black/20 dark:hover:bg-emerald-50"
+                  className="inline-flex items-center gap-2 bg-primary-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-primary-900/20 hover:bg-primary-600 transition-colors dark:bg-white dark:text-primary-900 dark:shadow-black/20 dark:hover:bg-primary-50"
                 >
                   Shop now
                 </Link>
@@ -89,7 +89,7 @@ const AdBanner = () => {
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-emerald-600 transition-colors dark:bg-white dark:text-emerald-900 dark:hover:bg-emerald-50"
+                  className="inline-flex items-center gap-2 bg-primary-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-primary-600 transition-colors dark:bg-white dark:text-primary-900 dark:hover:bg-primary-50"
                 >
                   Shop now
                   <ExternalLink size={18} />

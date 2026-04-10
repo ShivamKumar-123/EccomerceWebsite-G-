@@ -87,7 +87,7 @@ const About = () => {
 
           {/* Content Side */}
           <div className="about-content">
-            <span className="text-secondary font-semibold text-sm uppercase tracking-wider">About HeavyTech</span>
+            <span className="text-secondary font-semibold text-sm uppercase tracking-wider">About Goldy Mart</span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-3 mb-6">
               Covering India with Advanced <span className="text-primary">Farming Solutions</span>
             </h2>
@@ -98,7 +98,7 @@ const About = () => {
               Madhya Pradesh to the seaside plains of Maharashtra.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
-              At HeavyTech, we are more than a business. We are partners in India's journey towards 
+              At Goldy Mart, we are more than a business. We are partners in India's journey towards 
               a better shopping experience. Our diverse range of lifestyle and home products 
               machines stands at the core of modern farming practices.
             </p>

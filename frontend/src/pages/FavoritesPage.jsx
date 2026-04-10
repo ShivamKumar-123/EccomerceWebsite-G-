@@ -1,34 +1,53 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Star, Trash2, ArrowRight } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
+import PaginationBar from '../components/PaginationBar';
+import LazyImage from '../components/LazyImage';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCart } from '../context/CartContext';
 import ProductSizeSelect from '../components/ProductSizeSelect';
 import FavoriteButton from '../components/FavoriteButton';
 
+const FAVORITES_PAGE_SIZE = 8;
+
 const FavoritesPage = () => {
   const { favorites, removeFavorite } = useFavorites();
   const { addToCart } = useCart();
   const [selectedSizes, setSelectedSizes] = useState({});
+  const [listPage, setListPage] = useState(1);
+
+  const favTotalPages = Math.max(1, Math.ceil(favorites.length / FAVORITES_PAGE_SIZE));
+  const pagedFavorites = useMemo(() => {
+    const start = (listPage - 1) * FAVORITES_PAGE_SIZE;
+    return favorites.slice(start, start + FAVORITES_PAGE_SIZE);
+  }, [favorites, listPage]);
+
+  useEffect(() => {
+    setListPage(1);
+  }, [favorites.length]);
+
+  useEffect(() => {
+    if (listPage > favTotalPages) setListPage(favTotalPages);
+  }, [listPage, favTotalPages]);
 
   return (
-    <div className="min-h-screen bg-stone-100 pb-16 dark:bg-[#0c1210] transition-colors">
+    <div className="min-h-screen bg-stone-100 pb-16 dark:bg-dark transition-colors">
       <SEOHead
-        title="Favourites — GoldyMart"
+        title="Favourites — Goldy Mart"
         description="Your saved products"
-        keywords="wishlist, favourites, GoldyMart"
-        url="https://www.heavytechmachinery.com/favorites"
+        keywords="wishlist, favourites, Goldy Mart"
+        url="https://www.goldymart.com/favorites"
       />
 
-      <div className="border-b border-stone-200/80 bg-gradient-to-r from-emerald-100/90 via-stone-50 to-amber-50/80 dark:from-emerald-950/50 dark:via-stone-950 dark:to-stone-900 dark:border-white/10">
+      <div className="border-b border-stone-200/80 bg-gradient-to-r from-primary-100/90 via-stone-50 to-amber-50/80 dark:from-primary-950/50 dark:via-stone-950 dark:to-stone-900 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 w-full min-w-0">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 dark:text-white tracking-tight flex items-center gap-3">
             <Heart className="text-red-500 fill-red-500 shrink-0" size={32} />
             Favourites
           </h1>
           <p className="text-stone-600 dark:text-stone-400 mt-2 text-sm">
-            <Link to="/" className="hover:text-emerald-800 dark:hover:text-emerald-300">
+            <Link to="/" className="hover:text-primary-800 dark:hover:text-primary-300">
               Home
             </Link>
             <span className="mx-2">/</span>
@@ -45,55 +64,57 @@ const FavoritesPage = () => {
             <p className="text-stone-500 dark:text-stone-400 text-sm mb-6">Tap the heart on any product to save it here.</p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 text-white font-bold text-sm hover:opacity-95"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary-700 to-primary-600 text-white font-bold text-sm hover:opacity-95"
             >
               Browse products
               <ArrowRight size={18} />
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {favorites.map((product) => (
+          <>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+            {pagedFavorites.map((product) => (
               <div
                 key={product.id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-gradient-to-b from-white to-stone-50 dark:from-stone-800/90 dark:to-stone-900/90 dark:border-white/10 shadow-soft"
+                className="group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-gradient-to-b from-white to-stone-50 shadow-soft dark:border-white/10 dark:from-stone-800/90 dark:to-stone-900/90"
               >
-                <div className="relative aspect-[4/5] bg-stone-100 p-4 dark:bg-stone-950/50">
+                <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden bg-stone-100 dark:bg-stone-950/50">
                   <Link to={`/products?category=${encodeURIComponent(product.category || 'all')}`} className="block h-full">
-                    <img
+                    <LazyImage
                       src={product.image}
                       alt=""
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                     />
                   </Link>
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    <FavoriteButton product={product} className="bg-white/90 dark:bg-stone-900/90 shadow-sm" size={20} />
+                  <div className="absolute right-1.5 top-1.5 flex gap-0.5">
+                    <FavoriteButton product={product} className="bg-white/90 shadow-sm dark:bg-stone-900/90" size={18} />
                     <button
                       type="button"
                       onClick={() => removeFavorite(product.id)}
-                      className="inline-flex p-2 rounded-xl bg-white/90 dark:bg-stone-900/90 text-stone-500 hover:text-red-600 shadow-sm"
+                      className="inline-flex rounded-lg bg-white/90 p-1.5 text-stone-500 shadow-sm hover:text-red-600 dark:bg-stone-900/90"
                       aria-label="Remove from list"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </div>
-                <div className="p-4 flex-1 flex flex-col">
-                  <div className="flex items-center gap-1 mb-1">
-                    <Star className="text-amber-400 fill-amber-400 w-3.5 h-3.5" />
-                    <span className="text-xs text-stone-500 dark:text-stone-400">{product.rating}</span>
+                <div className="flex min-h-0 flex-1 flex-col p-3">
+                  <div className="mb-0.5 flex shrink-0 items-center gap-1">
+                    <Star className="h-3 w-3 fill-secondary-400 text-secondary-400" />
+                    <span className="text-[11px] text-stone-500 dark:text-stone-400">{product.rating}</span>
                   </div>
                   <Link
                     to={`/products?category=${encodeURIComponent(product.category || 'all')}`}
-                    className="text-sm text-stone-900 line-clamp-2 min-h-[2.5rem] font-medium leading-snug dark:text-white hover:text-emerald-700 dark:hover:text-emerald-400"
+                    className="block h-[2.5rem] overflow-hidden text-xs font-medium leading-snug text-stone-900 line-clamp-2 hover:text-primary-700 dark:text-white dark:hover:text-primary-400"
                   >
                     {product.name}
                   </Link>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-400/90 mt-1 capitalize">
+                  <p className="mt-0.5 shrink-0 text-[11px] capitalize text-primary-800 dark:text-primary-300">
                     {String(product.category || '').replace(/-/g, ' ')}
                   </p>
-                  <span className="text-lg font-black text-stone-900 dark:text-white mt-2">{product.price}</span>
-                  <div className="mt-auto pt-4 flex flex-col gap-2">
+                  <div className="min-h-0 flex-1" aria-hidden="true" />
+                  <div className="flex shrink-0 flex-col gap-1.5 pt-2">
+                    <span className="text-base font-black text-stone-900 dark:text-white">{product.price}</span>
                     <ProductSizeSelect
                       product={product}
                       value={selectedSizes[product.id] || ''}
@@ -111,15 +132,24 @@ const FavoritesPage = () => {
                         const ok = addToCart(product, { size: needSize ? size : undefined });
                         if (!ok) alert('Could not add — size may be out of stock.');
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 hover:from-amber-400 hover:to-amber-500 transition-all"
+                      className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary-600 to-secondary-800 py-2 text-[11px] font-bold text-white ring-1 ring-secondary-400/30 transition-all hover:brightness-105"
                     >
-                      <ShoppingCart size={16} /> Add to cart
+                      <ShoppingCart size={14} /> Add to cart
                     </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          <PaginationBar
+            className="mt-8"
+            currentPage={listPage}
+            totalPages={favTotalPages}
+            totalCount={favorites.length}
+            pageSize={FAVORITES_PAGE_SIZE}
+            onPageChange={setListPage}
+          />
+          </>
         )}
       </div>
     </div>

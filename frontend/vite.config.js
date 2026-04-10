@@ -12,4 +12,11 @@ export default defineConfig({
       '/admin': { target: djangoTarget, changeOrigin: true },
     },
   },
+  // Same as dev: `vite preview` has no /api without this — login would "Failed to fetch".
+  preview: {
+    proxy: {
+      '/api': { target: djangoTarget, changeOrigin: true },
+      '/admin': { target: djangoTarget, changeOrigin: true },
+    },
+  },
 })

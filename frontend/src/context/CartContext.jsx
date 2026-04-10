@@ -2,10 +2,11 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { canCallApi } from '../services/productsApi';
 import * as ops from '../services/operationsApi';
 import { buildCartLineId, stockForLine, normalizeCartArray } from '../lib/cartLine';
+import { effectiveSizeVariantsForProduct } from '../lib/productSizeDefaults';
 
 const CartContext = createContext();
 
-const CART_KEY = 'heavytech_cart';
+const CART_KEY = 'goldymart_cart';
 
 function cartStorage() {
   return typeof sessionStorage !== 'undefined' ? sessionStorage : localStorage;
@@ -51,7 +52,7 @@ export const CartProvider = ({ children }) => {
       return;
     }
     try {
-      const cur = localStorage.getItem('heavytech_current_user');
+      const cur = localStorage.getItem('goldymart_current_user');
       const uid = cur ? JSON.parse(cur).id : null;
       if (uid) {
         const list = await ops.listOrdersByUserId(uid);
@@ -73,8 +74,8 @@ export const CartProvider = ({ children }) => {
     const onAuth = () => {
       refreshOrders();
     };
-    window.addEventListener('heavytech-auth-changed', onAuth);
-    return () => window.removeEventListener('heavytech-auth-changed', onAuth);
+    window.addEventListener('goldymart-auth-changed', onAuth);
+    return () => window.removeEventListener('goldymart-auth-changed', onAuth);
   }, [refreshOrders]);
 
   useEffect(() => {
@@ -82,28 +83,53 @@ export const CartProvider = ({ children }) => {
       setCartItems([]);
       writeCartToStorage([]);
     };
-    window.addEventListener('heavytech-logout-cart', onLogout);
-    return () => window.removeEventListener('heavytech-logout-cart', onLogout);
+    window.addEventListener('goldymart-logout-cart', onLogout);
+    return () => window.removeEventListener('goldymart-logout-cart', onLogout);
   }, []);
 
   /**
    * @param {object} product
-   * @param {{ size?: string, quantity?: number }} [opts]
+   * @param {{ size?: string, quantity?: number, color?: string }} [opts]
    * @returns {boolean} false if size required but missing, or no stock
    */
   const addToCart = (product, opts = {}) => {
-    const { size, quantity = 1 } = opts;
-    const variants = product.sizeVariants;
-    const needSize = Array.isArray(variants) && variants.length > 0;
+    const { size, quantity = 1, color } = opts;
+    const variants = effectiveSizeVariantsForProduct(product);
+    const needSize = variants.length > 0;
     const chosen = needSize ? String(size || '').trim() : '';
 
     if (needSize && !chosen) return false;
 
-    const maxStock = stockForLine({ ...product, selectedSize: needSize ? chosen : null });
+    const rawCols = Array.isArray(product.colors) ? product.colors : [];
+    const colorSlugs = [
+      ...new Set(
+        rawCols
+          .map((c) => String(c || '').trim().toLowerCase().replace(/\s+/g, '_'))
+          .filter(Boolean)
+      ),
+    ];
+    const multiColor = colorSlugs.length > 1;
+    const fromOpt = String(color || '').trim().toLowerCase().replace(/\s+/g, '_');
+    const chosenColor = multiColor
+      ? fromOpt && colorSlugs.includes(fromOpt)
+        ? fromOpt
+        : colorSlugs[0]
+      : colorSlugs[0]
+        ? colorSlugs[0]
+        : '';
+
+    const colorForLineId = multiColor ? chosenColor : null;
+    const selectedColorForItem = colorSlugs.length ? (multiColor ? chosenColor : colorSlugs[0]) : null;
+
+    const maxStock = stockForLine({
+      ...product,
+      sizeVariants: variants,
+      selectedSize: needSize ? chosen : null,
+    });
     if (maxStock <= 0) return false;
 
     setCartItems((prev) => {
-      const lineId = buildCartLineId(product.id, needSize ? chosen : null);
+      const lineId = buildCartLineId(product.id, needSize ? chosen : null, colorForLineId);
       const existingItem = prev.find((item) => item.lineId === lineId);
       const baseQty = existingItem?.quantity || 0;
       const addQ = Math.min(quantity, maxStock - baseQty);
@@ -121,8 +147,10 @@ export const CartProvider = ({ children }) => {
           ...prev,
           {
             ...product,
+            sizeVariants: variants,
             lineId,
             selectedSize: needSize ? chosen : null,
+            selectedColor: selectedColorForItem,
             quantity: addQ,
           },
         ];

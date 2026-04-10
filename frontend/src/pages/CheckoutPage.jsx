@@ -22,8 +22,8 @@ function cartStorageHasItems() {
   try {
     const raw =
       typeof sessionStorage !== 'undefined'
-        ? sessionStorage.getItem('heavytech_cart')
-        : localStorage.getItem('heavytech_cart');
+        ? sessionStorage.getItem('goldymart_cart')
+        : localStorage.getItem('goldymart_cart');
     return raw ? JSON.parse(raw).length > 0 : false;
   } catch {
     return false;
@@ -49,6 +49,7 @@ const CheckoutPage = () => {
     phone: '',
     address: '',
     city: '',
+    district: '',
     state: '',
     pincode: '',
   });
@@ -76,8 +77,8 @@ const CheckoutPage = () => {
         setSelectedDeliveryId(opts[0].id);
       }
     };
-    window.addEventListener('heavytech-delivery-updated', onUpd);
-    return () => window.removeEventListener('heavytech-delivery-updated', onUpd);
+    window.addEventListener('goldymart-delivery-updated', onUpd);
+    return () => window.removeEventListener('goldymart-delivery-updated', onUpd);
   }, [selectedDeliveryId]);
 
   const skipDeliveryChoice = useMemo(
@@ -102,6 +103,7 @@ const CheckoutPage = () => {
         phone: user.phone || '',
         address: user.address || '',
         city: user.city || '',
+        district: user.district || '',
         state: user.state || '',
         pincode: user.pincode || '',
       });
@@ -156,7 +158,7 @@ const CheckoutPage = () => {
 
       let cartItemsToUse = [];
       const store = typeof sessionStorage !== 'undefined' ? sessionStorage : localStorage;
-      const savedCart = store.getItem('heavytech_cart');
+      const savedCart = store.getItem('goldymart_cart');
       if (savedCart) {
         cartItemsToUse = normalizeCartArray(JSON.parse(savedCart));
       }
@@ -178,7 +180,7 @@ const CheckoutPage = () => {
       });
 
       let currentUserId = null;
-      const currentUserStr = localStorage.getItem('heavytech_current_user');
+      const currentUserStr = localStorage.getItem('goldymart_current_user');
       if (currentUserStr) {
         currentUserId = JSON.parse(currentUserStr).id;
       }
@@ -220,7 +222,7 @@ const CheckoutPage = () => {
       await refreshCartOrders();
       refreshUserOrders();
       localStorage.setItem(
-        'heavytech_user_info',
+        'goldymart_user_info',
         JSON.stringify({
           name: customerInfo.name,
           email: customerInfo.email,
@@ -245,7 +247,7 @@ const CheckoutPage = () => {
   };
 
   // UPI Payment Details
-  const upiId = "heavytech@upi";
+  const upiId = "goldymart@upi";
   const deliveryFee = selectedDelivery?.fee ?? 0;
   const totalAmount = getCartTotal() * 1.18 + deliveryFee;
 
@@ -279,14 +281,14 @@ const CheckoutPage = () => {
               {[1, 2].map((s) => (
                 <div key={s} className="flex items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                    step >= s ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-500'
+                    step >= s ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500'
                   }`}>
                     {s}
                   </div>
-                  <span className={`ml-2 text-sm sm:text-base font-medium ${step >= s ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                  <span className={`ml-2 text-sm sm:text-base font-medium ${step >= s ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'}`}>
                     {s === 1 ? 'Details' : 'Payment'}
                   </span>
-                  {s < 2 && <div className={`hidden sm:block w-12 sm:w-20 h-1 mx-2 sm:mx-4 ${step > s ? 'bg-green-600 dark:bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>}
+                  {s < 2 && <div className={`hidden sm:block w-12 sm:w-20 h-1 mx-2 sm:mx-4 ${step > s ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>}
                 </div>
               ))}
             </div>
@@ -301,7 +303,7 @@ const CheckoutPage = () => {
           {step === 1 && (
             <div className="checkout-form bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-800">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <User className="text-green-600 dark:text-green-400 shrink-0" />
+                <User className="text-primary-600 dark:text-primary-400 shrink-0" />
                 Customer Details
               </h2>
 
@@ -313,7 +315,7 @@ const CheckoutPage = () => {
                     name="name"
                     value={customerInfo.name}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -324,7 +326,7 @@ const CheckoutPage = () => {
                     name="email"
                     value={customerInfo.email}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -335,7 +337,7 @@ const CheckoutPage = () => {
                     name="phone"
                     value={customerInfo.phone}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -346,7 +348,7 @@ const CheckoutPage = () => {
                     name="pincode"
                     value={customerInfo.pincode}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter pincode"
                   />
                 </div>
@@ -357,7 +359,7 @@ const CheckoutPage = () => {
                     value={customerInfo.address}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter your full address"
                   />
                 </div>
@@ -368,8 +370,21 @@ const CheckoutPage = () => {
                     name="city"
                     value={customerInfo.city}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter city"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    District <span className="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="district"
+                    value={customerInfo.district}
+                    onChange={handleInputChange}
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="e.g. Indore — helps assign local delivery partner"
                   />
                 </div>
                 <div>
@@ -379,7 +394,7 @@ const CheckoutPage = () => {
                     name="state"
                     value={customerInfo.state}
                     onChange={handleInputChange}
-                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="Enter state"
                   />
                 </div>
@@ -387,7 +402,7 @@ const CheckoutPage = () => {
 
               <div className="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-                  <Truck className="text-green-600 dark:text-green-400" size={22} />
+                  <Truck className="text-primary-600 dark:text-primary-400" size={22} />
                   Delivery option
                 </h3>
                 {skipDeliveryChoice ? (
@@ -396,7 +411,7 @@ const CheckoutPage = () => {
                     <p className="text-sm text-amber-800 dark:text-amber-200/90 mt-2 leading-relaxed">
                       {FREIGHT_ON_REQUEST_DELIVERY.description}
                     </p>
-                    <p className="text-sm font-semibold text-green-700 dark:text-green-400 mt-3">
+                    <p className="text-sm font-semibold text-primary-700 dark:text-primary-400 mt-3">
                       Delivery fee on order: <strong>₹0</strong> (quoted separately after confirmation)
                     </p>
                   </div>
@@ -413,13 +428,13 @@ const CheckoutPage = () => {
                           onClick={() => setSelectedDeliveryId(opt.id)}
                           className={`text-left rounded-2xl border-2 p-4 transition-all ${
                             selectedDeliveryId === opt.id
-                              ? 'border-green-600 bg-green-50 dark:bg-green-900/30 dark:border-green-500 ring-2 ring-green-500/30'
-                              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-green-300 dark:hover:border-green-700'
+                              ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/30 dark:border-primary-500 ring-2 ring-primary-500/30'
+                              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-primary-300 dark:hover:border-primary-700'
                           }`}
                         >
                           <p className="font-bold text-gray-900 dark:text-white">{opt.name}</p>
                           <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{opt.description}</p>
-                          <p className="text-sm font-semibold text-green-600 dark:text-green-400 mt-2">
+                          <p className="text-sm font-semibold text-primary-600 dark:text-primary-400 mt-2">
                             {opt.fee === 0 ? 'Free' : formatPrice(opt.fee)}
                             <span className="text-gray-500 dark:text-gray-400 font-normal">
                               {' '}
@@ -442,7 +457,7 @@ const CheckoutPage = () => {
                   disabled={!isStep1Valid() || (!skipDeliveryChoice && deliveryOptions.length === 0)}
                   className={`w-full sm:w-auto px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all ${
                     isStep1Valid() && (skipDeliveryChoice || deliveryOptions.length > 0)
-                      ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white hover:shadow-xl hover:scale-105'
+                      ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-xl hover:scale-105'
                       : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -457,7 +472,7 @@ const CheckoutPage = () => {
           {step === 2 && (
             <div className="checkout-form bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border border-gray-100 dark:border-gray-800">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                <QrCode className="text-green-600 dark:text-green-400" />
+                <QrCode className="text-primary-600 dark:text-primary-400" />
                 Payment via UPI
               </h2>
 
@@ -467,7 +482,7 @@ const CheckoutPage = () => {
                 <div className="flex flex-wrap gap-4 mt-2 text-gray-700 dark:text-gray-300">
                   <span>Items + GST: <strong>{formatPrice(getCartTotal() * 1.18)}</strong></span>
                   <span>Delivery: <strong>{deliveryFee === 0 ? 'Free' : formatPrice(deliveryFee)}</strong></span>
-                  <span className="text-green-600 dark:text-green-400 font-bold">Total: {formatPrice(totalAmount)}</span>
+                  <span className="text-primary-600 dark:text-primary-400 font-bold">Total: {formatPrice(totalAmount)}</span>
                 </div>
               </div>
 
@@ -476,7 +491,7 @@ const CheckoutPage = () => {
                 <div className="text-center w-full min-w-0">
                   <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 inline-block max-w-full">
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=HeavyTech%26am=${totalAmount.toFixed(0)}%26cu=INR`}
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}%26pn=Goldy%20Mart%26am=${totalAmount.toFixed(0)}%26cu=INR`}
                       alt="Payment QR Code"
                       className="w-48 h-48 mx-auto"
                     />
@@ -486,9 +501,9 @@ const CheckoutPage = () => {
                     <p className="text-sm text-gray-500 dark:text-gray-400">UPI ID</p>
                     <p className="font-bold text-lg text-gray-900 dark:text-white break-all">{upiId}</p>
                   </div>
-                  <div className="mt-4 bg-green-100 dark:bg-green-900/40 rounded-xl p-4">
-                    <p className="text-sm text-green-600 dark:text-green-400">Amount to Pay</p>
-                    <p className="font-black text-2xl text-green-700 dark:text-green-300">{formatPrice(totalAmount)}</p>
+                  <div className="mt-4 bg-primary-100 dark:bg-primary-900/40 rounded-xl p-4">
+                    <p className="text-sm text-primary-600 dark:text-primary-400">Amount to Pay</p>
+                    <p className="font-black text-2xl text-primary-700 dark:text-primary-300">{formatPrice(totalAmount)}</p>
                   </div>
                 </div>
 
@@ -500,7 +515,7 @@ const CheckoutPage = () => {
                     Our admin will verify and approve your order.
                   </p>
 
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-4 sm:p-6 text-center hover:border-green-500 dark:hover:border-green-600 transition-colors">
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-4 sm:p-6 text-center hover:border-primary-500 dark:hover:border-primary-600 transition-colors">
                     {paymentScreenshot ? (
                       <div>
                         <img
@@ -508,7 +523,7 @@ const CheckoutPage = () => {
                           alt="Payment Screenshot"
                           className="max-h-48 mx-auto rounded-lg mb-4"
                         />
-                        <p className="text-green-600 font-medium">Screenshot uploaded!</p>
+                        <p className="text-primary-600 font-medium">Screenshot uploaded!</p>
                         <button
                           onClick={() => setPaymentScreenshot(null)}
                           className="text-red-500 text-sm mt-2 hover:underline"
@@ -566,19 +581,19 @@ const CheckoutPage = () => {
           {/* Step 3: Order Confirmation */}
           {step === 3 && orderPlaced && (
             <div className="checkout-form bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl text-center border border-gray-100 dark:border-gray-800">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="text-green-600 dark:text-green-400" size={48} />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary-100 dark:bg-primary-900/40 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="text-primary-600 dark:text-primary-400" size={48} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Order Placed Successfully!</h2>
               <p className="text-gray-600 dark:text-gray-400 mb-2">Your order ID is:</p>
               <div className="flex items-center justify-center gap-2 mb-6">
-                <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 break-all">#{orderId?.slice(-8)}</p>
+                <p className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400 break-all">#{orderId?.slice(-8)}</p>
                 <button
                   onClick={copyOrderId}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors shrink-0"
                   title="Copy Order ID"
                 >
-                  {copied ? <Check size={20} className="text-green-600" /> : <Copy size={20} className="text-gray-400" />}
+                  {copied ? <Check size={20} className="text-primary-600" /> : <Copy size={20} className="text-gray-400" />}
                 </button>
               </div>
               
@@ -624,7 +639,7 @@ const CheckoutPage = () => {
                   </div>
                   <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2 flex justify-between">
                     <span className="font-bold text-gray-900 dark:text-white">Total Amount</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">
+                    <span className="font-bold text-primary-600 dark:text-primary-400">
                       {formatPrice(placedSummary?.grandTotal ?? totalAmount)}
                     </span>
                   </div>
@@ -634,7 +649,7 @@ const CheckoutPage = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/track-order"
-                  className="px-8 py-4 rounded-full font-bold bg-gradient-to-r from-green-600 to-emerald-500 text-white hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                  className="px-8 py-4 rounded-full font-bold bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-xl transition-all flex items-center justify-center gap-2"
                 >
                   <Package size={20} />
                   Track Your Order

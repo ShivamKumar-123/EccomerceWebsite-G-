@@ -1,5 +1,5 @@
-# Robots.txt for HeavyTech Machinery
-# https://www.heavytechmachinery.com
+# Robots.txt for Goldy Mart
+# https://www.goldymart.com
 
 User-agent: *
 Allow: /
@@ -22,7 +22,7 @@ Disallow: /admin
 Disallow: /admin/
 
 # Sitemap location
-Sitemap: https://www.heavytechmachinery.com/sitemap.xml
+Sitemap: https://www.goldymart.com/sitemap.xml
 
 # Crawl-delay for polite crawling
 Crawl-delay: 1

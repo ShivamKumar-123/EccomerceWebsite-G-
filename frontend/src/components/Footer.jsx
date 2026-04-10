@@ -57,13 +57,13 @@ const Footer = () => {
               We create the future of farming.
             </p>
             <div className="flex space-x-4">
-              <a href="https://www.facebook.com/heavytechmachinery" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
+              <a href="https://www.facebook.com/goldymart" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Facebook size={20} />
               </a>
-              <a href="https://www.youtube.com/@heavytechkm" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors">
+              <a href="https://www.youtube.com/@goldymart" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors">
                 <Youtube size={20} />
               </a>
-              <a href="https://www.instagram.com/heavytechmachinery/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/goldymart/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-colors">
                 <Instagram size={20} />
               </a>
             </div>
@@ -114,7 +114,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail size={20} className="text-secondary flex-shrink-0" />
-                <p className="text-gray-400">info@heavytechmachinery.com</p>
+                <p className="text-gray-400">info@goldymart.com</p>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm">
-              © 2024 HeavyTech Machinery. All Rights Reserved.
+              © 2024 Goldy Mart. All Rights Reserved.
             </p>
             <div className="flex items-center space-x-6 text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>

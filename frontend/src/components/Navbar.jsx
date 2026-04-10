@@ -10,7 +10,7 @@ const Navbar = () => {
   const productCategories = [
     {
       name: 'Rice Mills',
-      items: ['HEAVYTECH 6N40 DSV MINI RICE MILL', '3 HP Mini Rice Mill Machine', '7 HP Mini Rice Mill Machine', 'HEAVYTECH 6N40 VIBRATOR', 'HEAVYTECH 6W50 MINI RICE MILL']
+      items: ['GOLDY MART 6N40 DSV MINI RICE MILL', '3 HP Mini Rice Mill Machine', '7 HP Mini Rice Mill Machine', 'GOLDY MART 6N40 VIBRATOR', 'GOLDY MART 6W50 MINI RICE MILL']
     },
     {
       name: 'Agriculture & Farming',

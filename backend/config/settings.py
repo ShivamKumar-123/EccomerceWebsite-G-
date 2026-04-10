@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "products.apps.ProductsConfig",
     "orders.apps.OrdersConfig",
+    "delivery_partners.apps.DeliveryPartnersConfig",
 ]
 
 MIDDLEWARE = [
@@ -77,7 +79,26 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Email: console backend prints to terminal in dev. For production set DJANGO_EMAIL_BACKEND and SMTP vars.
+EMAIL_BACKEND = os.environ.get(
+    "DJANGO_EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL",
+    "Goldy Mart <noreply@goldymart.local>",
+)
+if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
+    EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
+    EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+    EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
 # Dev: any frontend origin (Vite ports, LAN IP, preview) can read the API.
 if DEBUG:

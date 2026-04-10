@@ -30,8 +30,8 @@ export default function HomeSiteSections() {
 
   useEffect(() => {
     const onUpd = () => load();
-    window.addEventListener('heavytech-sections-updated', onUpd);
-    return () => window.removeEventListener('heavytech-sections-updated', onUpd);
+    window.addEventListener('goldymart-sections-updated', onUpd);
+    return () => window.removeEventListener('goldymart-sections-updated', onUpd);
   }, [load]);
 
   if (sections.length === 0) return null;
@@ -61,7 +61,7 @@ export default function HomeSiteSections() {
                   {String(s.ctaLink).startsWith('/') ? (
                     <Link
                       to={s.ctaLink}
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
+                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-700 to-primary-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
                     >
                       {s.ctaLabel}
                     </Link>
@@ -70,7 +70,7 @@ export default function HomeSiteSections() {
                       href={s.ctaLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
+                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-700 to-primary-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:opacity-95"
                     >
                       {s.ctaLabel}
                     </a>

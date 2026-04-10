@@ -6,7 +6,7 @@ import { listOrdersByUserId } from '../services/operationsApi';
 const UserAuthContext = createContext();
 
 function notifyAuthChanged() {
-  window.dispatchEvent(new Event('heavytech-auth-changed'));
+  window.dispatchEvent(new Event('goldymart-auth-changed'));
 }
 
 export const useUserAuth = () => {
@@ -84,7 +84,7 @@ export const UserAuthProvider = ({ children }) => {
     setUser(null);
     setOrders([]);
     CartStore.clear();
-    window.dispatchEvent(new Event('heavytech-logout-cart'));
+    window.dispatchEvent(new Event('goldymart-logout-cart'));
     notifyAuthChanged();
   };
 
@@ -96,7 +96,7 @@ export const UserAuthProvider = ({ children }) => {
     if (result.success) {
       setUser(result.user);
       // Update current user in localStorage
-      localStorage.setItem('heavytech_current_user', JSON.stringify(result.user));
+      localStorage.setItem('goldymart_current_user', JSON.stringify(result.user));
     }
     return result;
   };

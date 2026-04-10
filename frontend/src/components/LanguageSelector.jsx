@@ -121,12 +121,12 @@ const LanguageSelector = ({ scrolled = false }) => {
     }
 
     // Save preference
-    localStorage.setItem('heavytech_language', langCode);
+    localStorage.setItem('goldymart_language', langCode);
   };
 
   // Load saved language preference
   useEffect(() => {
-    const savedLang = localStorage.getItem('heavytech_language');
+    const savedLang = localStorage.getItem('goldymart_language');
     if (savedLang && savedLang !== 'en') {
       setCurrentLang(savedLang);
       // Auto-translate on load
@@ -173,15 +173,15 @@ const LanguageSelector = ({ scrolled = false }) => {
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors ${
-                currentLang === lang.code ? 'bg-green-50' : ''
+                currentLang === lang.code ? 'bg-primary-50' : ''
               }`}
             >
               <span className="text-lg">{lang.flag}</span>
-              <span className={`flex-1 text-sm ${currentLang === lang.code ? 'text-green-700 font-medium' : 'text-gray-700'}`}>
+              <span className={`flex-1 text-sm ${currentLang === lang.code ? 'text-primary-700 font-medium' : 'text-gray-700'}`}>
                 {lang.name}
               </span>
               {currentLang === lang.code && (
-                <Check size={16} className="text-green-600" />
+                <Check size={16} className="text-primary-600" />
               )}
             </button>
           ))}

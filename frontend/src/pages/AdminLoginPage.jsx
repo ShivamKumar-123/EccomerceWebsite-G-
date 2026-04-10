@@ -78,28 +78,27 @@ const AdminLoginPage = () => {
   return (
     <div
       ref={pageRef}
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-violet-950 to-slate-900 flex items-center justify-center p-4 relative"
+      className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-primary-950 via-primary-900 to-primary-950 p-4 [color-scheme:dark]"
     >
       <div className="absolute top-4 right-4 z-20">
         <ThemeToggle />
       </div>
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-20 w-[28rem] h-[28rem] bg-fuchsia-500/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-20 left-20 w-[24rem] h-[24rem] bg-cyan-500/15 rounded-full blur-[100px]" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute right-20 top-20 h-[28rem] w-[28rem] rounded-full bg-secondary-500/10 blur-[100px]" />
+        <div className="absolute bottom-20 left-20 h-[24rem] w-[24rem] rounded-full bg-secondary-500/5 blur-[100px]" />
       </div>
 
-      <div className="login-card relative bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl shadow-violet-900/40 w-full max-w-md border border-white/20">
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/30">
-            <Shield className="text-white" size={40} />
+      <div className="login-card relative w-full max-w-md rounded-3xl border border-white/10 bg-primary-900/95 p-8 shadow-2xl shadow-black/50 backdrop-blur-xl md:p-12">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary-500 to-secondary-700 text-primary-950 shadow-lg shadow-black/40">
+            <Shield size={40} />
           </div>
-          <h1 className="text-2xl font-black text-gray-900 tracking-tight">Store Admin</h1>
-          <p className="text-gray-600 mt-2 text-sm">
+          <h1 className="text-2xl font-black tracking-tight text-white">Store Admin</h1>
+          <p className="mt-2 text-sm text-primary-400">
             {hasApi ? (
-              <span className="inline-flex items-center gap-1.5 justify-center flex-wrap">
-                <Server size={14} className="text-violet-600" />
-                Django superuser (same as{' '}
-                <code className="text-xs bg-gray-100 px-1 rounded">init_admin</code>)
+              <span className="inline-flex flex-wrap items-center justify-center gap-1.5">
+                <Server size={14} className="text-secondary-500" />
+                Sign in with your admin account
               </span>
             ) : (
               'Set VITE_API_URL in .env.development and run the Django server.'
@@ -109,38 +108,38 @@ const AdminLoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+            <label className="mb-2 block text-sm font-medium text-white">Username</label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={20} />
               <input
                 type="text"
                 name="username"
                 value={credentials.username}
                 onChange={handleInputChange}
-                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                placeholder="admin"
+                className="w-full rounded-xl border border-white/15 bg-primary-950 py-3 pl-12 pr-4 text-white placeholder:text-primary-500 focus:border-secondary-500/50 focus:outline-none focus:ring-2 focus:ring-secondary-500/40"
+                placeholder="Username"
                 autoComplete="username"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="mb-2 block text-sm font-medium text-white">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" size={20} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={credentials.password}
                 onChange={handleInputChange}
-                className="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                className="w-full rounded-xl border border-white/15 bg-primary-950 py-3 pl-12 pr-12 text-white placeholder:text-primary-500 focus:border-secondary-500/50 focus:outline-none focus:ring-2 focus:ring-secondary-500/40"
                 placeholder="••••••••"
                 autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-400 hover:text-white"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -148,31 +147,26 @@ const AdminLoginPage = () => {
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-700 px-4 py-3 rounded-xl text-sm border border-red-100">{error}</div>
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-violet-500/25 transition-all hover:scale-[1.01] disabled:opacity-60"
+            className="w-full rounded-xl bg-cta py-4 font-bold text-cta-fg shadow-lg shadow-black/30 transition-all hover:scale-[1.01] hover:bg-white/90 disabled:opacity-60"
           >
             {loading ? 'Signing in…' : 'Login to dashboard'}
           </button>
         </form>
 
-        <div className="mt-6 text-center space-y-2 text-gray-500 text-xs">
-          {hasApi ? (
-            <p>
-              Default: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded">admin / admin123</span> after{' '}
-              <span className="font-mono">python manage.py init_admin</span>
-            </p>
-          ) : (
-            <p className="text-amber-700 bg-amber-50 rounded-lg py-2 px-3">
+        {!hasApi ? (
+          <div className="mt-6 text-center text-xs text-primary-400">
+            <p className="rounded-lg border border-secondary-500/30 bg-secondary-500/10 px-3 py-2 text-secondary-200">
               Create <code className="text-xs">frontend/.env.development</code> with{' '}
               <code className="text-xs">VITE_API_URL=http://127.0.0.1:8000</code>
             </p>
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

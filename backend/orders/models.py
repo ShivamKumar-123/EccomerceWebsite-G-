@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 
@@ -35,6 +36,18 @@ class Order(models.Model):
     items = models.JSONField(default=list)
     customer_info = models.JSONField(default=dict)
     payment_screenshot = models.TextField(blank=True)
+    delivery_proof_images = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Relative media paths for partner proof-of-delivery photos.",
+    )
+    delivery_partner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="partner_orders",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

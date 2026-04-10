@@ -10,11 +10,23 @@ export async function obtainJwtPair(username, password) {
   if (!canCallApi()) {
     throw new Error('API not reachable. Run Django on port 8000 and use npm run dev (Vite proxies /api), or set VITE_API_URL in .env');
   }
-  const r = await fetch(apiUrl('/api/auth/token/'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
-  });
+  const tokenUrl = apiUrl('/api/auth/token/');
+  let r;
+  try {
+    r = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch (e) {
+    const base = getApiBase();
+    const hint = base
+      ? `Browser is calling ${base} (saved in Settings / localStorage). If that server is down, clear “Backend API” in Admin → Settings or remove key goldymart_api_url from localStorage.`
+      : `With npm run dev, requests go to this site’s /api → Vite proxies to http://127.0.0.1:8000 (see vite.config.js / VITE_DJANGO_PROXY_TARGET).`;
+    throw new Error(
+      `Cannot reach Django (${tokenUrl}). ${hint} Start API: cd backend && python manage.py runserver`
+    );
+  }
   if (!r.ok) {
     let detail = 'Invalid credentials';
     try {

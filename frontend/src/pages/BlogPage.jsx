@@ -1,27 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, Clock, Tag, Search } from 'lucide-react';
 import { WaveSeparator } from '../components/WaveSeparator';
+import PaginationBar from '../components/PaginationBar';
+import LazyImage from '../components/LazyImage';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const BLOG_LIST_PAGE_SIZE = 6;
 
 const BlogPage = () => {
   const pageRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [blogListPage, setBlogListPage] = useState(1);
 
   const categories = ['all', 'Farming Tips', 'Success Stories', 'Technology', 'Sustainability'];
 
   const blogs = [
     {
       id: 1,
-      title: 'Success Stories: How Farmers Achieved Record Yields with HeavyTech',
+      title: 'Success Stories: How Farmers Achieved Record Yields with Goldy Mart',
       excerpt: 'Discover how farmers across India are achieving unprecedented yields using our machinery. Real stories from real farmers.',
       category: 'Success Stories',
       date: 'August 21, 2023',
       readTime: '5 min read',
-      author: 'HeavyTech Team',
+      author: 'Goldy Mart Team',
       image: 'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=600',
       featured: true
     },
@@ -38,7 +43,7 @@ const BlogPage = () => {
     },
     {
       id: 3,
-      title: 'Empowering Women in Agriculture: HeavyTech\'s Inclusive Approach',
+      title: 'Empowering Women in Agriculture: Goldy Mart\'s Inclusive Approach',
       excerpt: 'How we make quality products accessible and support shoppers and sellers across India.',
       category: 'Success Stories',
       date: 'August 21, 2023',
@@ -65,7 +70,7 @@ const BlogPage = () => {
       category: 'Sustainability',
       date: 'August 21, 2023',
       readTime: '5 min read',
-      author: 'HeavyTech Team',
+      author: 'Goldy Mart Team',
       image: 'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?auto=compress&cs=tinysrgb&w=600',
       featured: false
     },
@@ -108,7 +113,21 @@ const BlogPage = () => {
     ? blogs 
     : blogs.filter(blog => blog.category === activeCategory);
 
+  const blogListTotalPages = Math.max(1, Math.ceil(filteredBlogs.length / BLOG_LIST_PAGE_SIZE));
+  const pagedBlogs = useMemo(() => {
+    const start = (blogListPage - 1) * BLOG_LIST_PAGE_SIZE;
+    return filteredBlogs.slice(start, start + BLOG_LIST_PAGE_SIZE);
+  }, [filteredBlogs, blogListPage]);
+
   const featuredBlogs = blogs.filter(blog => blog.featured);
+
+  useEffect(() => {
+    setBlogListPage(1);
+  }, [activeCategory]);
+
+  useEffect(() => {
+    if (blogListPage > blogListTotalPages) setBlogListPage(blogListTotalPages);
+  }, [blogListPage, blogListTotalPages]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -126,7 +145,7 @@ const BlogPage = () => {
       <section className="relative min-h-[50vh] bg-gradient-to-br from-[#0a2e14] via-[#1a5f2a] to-[#0d3d18] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 right-20 w-72 h-72 bg-yellow-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-green-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-primary-400/20 rounded-full blur-3xl"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32 w-full min-w-0">
@@ -138,7 +157,7 @@ const BlogPage = () => {
               Latest <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">News & Insights</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-1">
-              Stay updated with shopping tips, deals, and stories from GoldyMart
+              Stay updated with shopping tips, deals, and stories from Goldy Mart
             </p>
           </div>
         </div>
@@ -151,7 +170,7 @@ const BlogPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900">
-              Featured <span className="text-green-600">Articles</span>
+              Featured <span className="text-primary-600">Articles</span>
             </h2>
           </div>
 
@@ -159,9 +178,10 @@ const BlogPage = () => {
             {featuredBlogs.map((blog, idx) => (
               <article key={blog.id} className="featured-card group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500">
                 <div className="relative h-72 overflow-hidden">
-                  <img 
+                  <LazyImage 
                     src={blog.image} 
                     alt={blog.title}
+                    priority={idx === 0}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
@@ -206,7 +226,7 @@ const BlogPage = () => {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all ${
                   activeCategory === cat
-                    ? 'bg-gradient-to-r from-green-600 to-emerald-500 text-white shadow-lg shadow-green-500/30'
+                    ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/30'
                     : 'bg-white text-gray-700 hover:bg-gray-100 shadow'
                 }`}
               >
@@ -217,16 +237,16 @@ const BlogPage = () => {
 
           {/* Blog Grid */}
           <div className="blogs-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredBlogs.map((blog) => (
+            {pagedBlogs.map((blog) => (
               <article key={blog.id} className="blog-card group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
                 <div className="relative h-52 overflow-hidden">
-                  <img 
+                  <LazyImage 
                     src={blog.image} 
                     alt={blog.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                       {blog.category}
                     </span>
                   </div>
@@ -242,18 +262,18 @@ const BlogPage = () => {
                       {blog.readTime}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors">
                     {blog.title}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{blog.excerpt}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <User size={14} className="text-green-600" />
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                        <User size={14} className="text-primary-600" />
                       </div>
                       <span className="text-sm text-gray-600">{blog.author}</span>
                     </div>
-                    <button className="text-green-600 font-semibold text-sm flex items-center gap-1 group-hover:text-green-700">
+                    <button className="text-primary-600 font-semibold text-sm flex items-center gap-1 group-hover:text-primary-700">
                       Read More <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
@@ -262,20 +282,21 @@ const BlogPage = () => {
             ))}
           </div>
 
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <button className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:shadow-green-500/30 transition-all hover:scale-105">
-              Load More Articles
-              <ArrowRight size={20} />
-            </button>
-          </div>
+          <PaginationBar
+            className="mt-10"
+            currentPage={blogListPage}
+            totalPages={blogListTotalPages}
+            totalCount={filteredBlogs.length}
+            pageSize={BLOG_LIST_PAGE_SIZE}
+            onPageChange={setBlogListPage}
+          />
         </div>
       </section>
 
       {/* Newsletter */}
       <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-800 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-green-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500 rounded-full blur-3xl"></div>
         </div>
 
@@ -290,7 +311,7 @@ const BlogPage = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none"
+              className="flex-1 px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none"
             />
             <button className="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-8 py-4 rounded-full font-bold hover:shadow-xl hover:shadow-yellow-500/30 transition-all hover:scale-105">
               Subscribe

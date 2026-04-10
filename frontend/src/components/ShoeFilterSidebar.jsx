@@ -12,8 +12,8 @@ import {
 
 function Section({ title, children }) {
   return (
-    <div className="border-b border-stone-200 dark:border-white/10 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
-      <h3 className="text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-3">{title}</h3>
+    <div className="mb-4 border-b border-white/10 pb-4 last:mb-0 last:border-0 last:pb-0">
+      <h3 className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.12em] text-secondary-500">{title}</h3>
       {children}
     </div>
   );
@@ -23,14 +23,14 @@ function Row({ id, label, checked, onChange }) {
   return (
     <label
       htmlFor={id}
-      className="flex items-center gap-2.5 py-1.5 px-1 rounded-lg hover:bg-stone-100 dark:hover:bg-white/5 cursor-pointer text-sm text-stone-800 dark:text-stone-200"
+      className="flex cursor-pointer items-center gap-2.5 rounded-xl px-1 py-2 text-sm text-white/90 transition-colors hover:bg-white/8"
     >
       <input
         id={id}
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 rounded border-stone-300 text-emerald-700 focus:ring-emerald-500/50 dark:border-stone-600 dark:bg-stone-800"
+        className="h-4 w-4 rounded border-white/20 bg-primary-900 text-secondary-600 focus:ring-secondary-500/50"
       />
       <span>{label}</span>
     </label>
@@ -120,11 +120,11 @@ export default function ShoeFilterSidebar({
     ordering;
 
   return (
-    <div className="bg-white dark:bg-stone-900/95 border border-stone-200/90 dark:border-white/10 rounded-2xl shadow-soft overflow-hidden">
+    <div className="overflow-hidden rounded-3xl border border-white/10 bg-primary-900/95 shadow-modern backdrop-blur-xl">
       {showHeader && (
-        <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-stone-200 dark:border-white/10 bg-stone-50/80 dark:bg-stone-800/50">
-          <div className="flex items-center gap-2 font-bold text-stone-900 dark:text-white text-sm">
-            <SlidersHorizontal size={18} className="text-emerald-700 dark:text-emerald-400" />
+        <div className="flex items-center justify-between gap-2 border-b border-white/10 bg-gradient-to-r from-primary-950 to-primary-900 px-4 py-3.5">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-white">
+            <SlidersHorizontal size={18} className="text-secondary-500" />
             Shoe filters
           </div>
           <div className="flex items-center gap-2">
@@ -132,7 +132,7 @@ export default function ShoeFilterSidebar({
               <button
                 type="button"
                 onClick={onClear}
-                className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400"
+                className="text-xs font-semibold text-secondary-400 hover:text-secondary-300"
               >
                 Clear all
               </button>
@@ -141,7 +141,7 @@ export default function ShoeFilterSidebar({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-white/10 lg:hidden"
+                className="rounded-lg p-1.5 hover:bg-white/10 lg:hidden"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -170,7 +170,7 @@ export default function ShoeFilterSidebar({
           <select
             value={ordering}
             onChange={(e) => onSortChange(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm text-stone-900 dark:bg-stone-800 dark:border-white/10 dark:text-white"
+            className="w-full rounded-xl border border-white/10 bg-primary-950 px-3 py-2.5 text-sm text-white"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.id || 'default'} value={o.id}>
@@ -183,7 +183,7 @@ export default function ShoeFilterSidebar({
         <Section title="Brand">
           <div className="space-y-0.5 max-h-44 overflow-y-auto pr-1 [scrollbar-width:thin]">
             {(facets.brands || []).length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400">No brands in catalogue</p>
+              <p className="text-xs text-primary-400">No brands in catalogue</p>
             ) : (
               facets.brands.map((b) => (
                 <Row
@@ -243,7 +243,7 @@ export default function ShoeFilterSidebar({
         <Section title={`Price (₹) — ${bmin.toLocaleString('en-IN')} – ${bmax.toLocaleString('en-IN')}`}>
           <div className="space-y-3">
             <div className="flex gap-3 items-center">
-              <label className="flex-1 text-[10px] font-semibold text-stone-500 uppercase">
+              <label className="flex-1 text-[10px] font-semibold uppercase text-primary-400">
                 Min
                 <input
                   type="range"
@@ -256,10 +256,10 @@ export default function ShoeFilterSidebar({
                     const hi = Math.max(priceSliderMax, v);
                     onPriceSlider(v, hi >= v ? hi : v);
                   }}
-                  className="w-full mt-1 accent-emerald-700"
+                  className="mt-1 w-full accent-secondary-500"
                 />
               </label>
-              <label className="flex-1 text-[10px] font-semibold text-stone-500 uppercase">
+              <label className="flex-1 text-[10px] font-semibold uppercase text-primary-400">
                 Max
                 <input
                   type="range"
@@ -272,11 +272,11 @@ export default function ShoeFilterSidebar({
                     const lo = Math.min(priceSliderMin, v);
                     onPriceSlider(lo <= v ? lo : v, v);
                   }}
-                  className="w-full mt-1 accent-emerald-700"
+                  className="mt-1 w-full accent-secondary-500"
                 />
               </label>
             </div>
-            <p className="text-xs font-semibold text-stone-700 dark:text-stone-300 text-center tabular-nums">
+            <p className="text-center text-xs font-semibold tabular-nums text-primary-400">
               ₹{Math.min(priceSliderMin, priceSliderMax).toLocaleString('en-IN')} – ₹
               {Math.max(priceSliderMin, priceSliderMax).toLocaleString('en-IN')}
             </p>
@@ -317,7 +317,7 @@ export default function ShoeFilterSidebar({
               <label
                 key={o.id || 'any'}
                 htmlFor={`rate-${o.id || 'any'}`}
-                className="flex items-center gap-2.5 py-1 px-1 rounded-lg hover:bg-stone-100 dark:hover:bg-white/5 cursor-pointer text-sm text-stone-800 dark:text-stone-200"
+                className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1 py-1 text-sm text-white/90 hover:bg-white/8"
               >
                 <input
                   id={`rate-${o.id || 'any'}`}
@@ -325,7 +325,7 @@ export default function ShoeFilterSidebar({
                   name="shoe-min-rating"
                   checked={o.id === '' ? !minRating : minRating === String(o.value)}
                   onChange={() => onRatingChange(o.id === '' ? '' : String(o.value))}
-                  className="h-4 w-4 border-stone-300 text-emerald-700 focus:ring-emerald-500/50 dark:border-stone-600"
+                  className="h-4 w-4 border-white/20 text-secondary-600 focus:ring-secondary-500/50"
                 />
                 {o.label}
               </label>

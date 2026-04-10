@@ -90,7 +90,7 @@ export async function saveDeliveryOptions(options) {
   const norm = normalize(options);
   const rows = await bulkReplaceDeliveryOptions(norm);
   setDeliveryApiCache(rows);
-  window.dispatchEvent(new Event('heavytech-delivery-updated'));
+  window.dispatchEvent(new Event('goldymart-delivery-updated'));
 }
 
 export function getDeliveryOptionById(id) {

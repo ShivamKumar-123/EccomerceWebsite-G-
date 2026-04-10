@@ -25,6 +25,16 @@ export function normalizeOrder(row) {
     items: Array.isArray(row.items) ? row.items : [],
     customerInfo: row.customerInfo ?? row.customer_info ?? {},
     paymentScreenshot: row.paymentScreenshot ?? row.payment_screenshot ?? '',
+    deliveryProofImages: (() => {
+      const raw = row.deliveryProofImages ?? row.delivery_proof_images;
+      if (!Array.isArray(raw)) return [];
+      return raw.map((u) => String(u)).filter(Boolean);
+    })(),
+    deliveryPartnerId:
+      row.deliveryPartnerId ??
+      row.delivery_partner_id ??
+      row.delivery_partner ??
+      null,
     createdAt: row.createdAt || row.created_at,
     updatedAt: row.updatedAt || row.updated_at,
   };

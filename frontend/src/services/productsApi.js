@@ -1,9 +1,14 @@
-const LS_API = 'heavytech_api_url';
+import {
+  effectiveSizeVariantsForProduct,
+  normalizeSizeVariantsList,
+} from '../lib/productSizeDefaults';
+
+const LS_API = 'goldymart_api_url';
 /** Stored value is JWT access token (legacy key name). */
-const LS_TOKEN = 'heavytech_drf_token';
-const SS_TOKEN = 'heavytech_drf_token_session';
-const LS_REFRESH = 'heavytech_jwt_refresh';
-const SS_REFRESH = 'heavytech_jwt_refresh_session';
+const LS_TOKEN = 'goldymart_drf_token';
+const SS_TOKEN = 'goldymart_drf_token_session';
+const LS_REFRESH = 'goldymart_jwt_refresh';
+const SS_REFRESH = 'goldymart_jwt_refresh_session';
 
 function envAccess() {
   const a = import.meta.env.VITE_JWT_ACCESS || import.meta.env.VITE_DRF_TOKEN;
@@ -228,8 +233,13 @@ export function getBackendConfig() {
   };
 }
 
-function mapProductRow(p) {
-  return {
+/**
+ * @param {object} p
+ * @param {{ storefront?: boolean }} [options] storefront=false (admin): no default sizes; only normalise saved rows.
+ */
+function mapProductRow(p, options = {}) {
+  const storefront = options.storefront !== false;
+  const row = {
     ...p,
     rating: p.rating != null ? Number(p.rating) : 4.5,
     sizeVariants: p.sizeVariants || p.size_variants || [],
@@ -237,9 +247,26 @@ function mapProductRow(p) {
     genders: p.genders || [],
     brand: p.brand || '',
     colors: p.colors || [],
-    discountPercent: Number(p.discountPercent ?? p.discount_percent ?? 0) || 0,
+    originalPrice: p.originalPrice ?? p.original_price ?? null,
+    offerDiscountPercent:
+      Number(p.offerDiscountPercent ?? p.offer_discount_percent ?? 0) || 0,
+    saleDiscountPercent:
+      Number(p.saleDiscountPercent ?? p.sale_discount_percent ?? 0) || 0,
+    discountPercent:
+      Number(p.discountPercent ?? p.saleDiscountPercent ?? p.sale_discount_percent ?? 0) || 0,
     createdAt: p.createdAt || p.created_at || null,
   };
+  const fromApi = Array.isArray(row.images)
+    ? row.images.map((x) => String(x).trim()).filter(Boolean)
+    : [];
+  const primary = row.image != null ? String(row.image).trim() : '';
+  const images = fromApi.length ? fromApi : primary ? [primary] : [];
+  row.images = images;
+  row.image = images[0] || primary || '';
+  row.sizeVariants = storefront
+    ? effectiveSizeVariantsForProduct(row)
+    : normalizeSizeVariantsList(row.sizeVariants);
+  return row;
 }
 
 /**
@@ -335,17 +362,40 @@ export async function listProducts(opts = {}) {
     throw new Error(`Failed to load products (${r.status})`);
   }
   const data = await r.json();
+  const rowOpts = { storefront: !opts.admin };
   if (Array.isArray(data)) {
-    const results = data.map(mapProductRow);
+    const results = data.map((p) => mapProductRow(p, rowOpts));
     return { results, count: results.length, next: null, previous: null };
   }
   const rawResults = data.results || [];
   return {
-    results: rawResults.map(mapProductRow),
+    results: rawResults.map((p) => mapProductRow(p, rowOpts)),
     count: typeof data.count === 'number' ? data.count : rawResults.length,
     next: data.next || null,
     previous: data.previous || null,
   };
+}
+
+/**
+ * Single product for detail page (guest: active only; admin optional).
+ * @param {string|number} id
+ * @param {{ admin?: boolean }} [opts]
+ */
+export async function fetchProductById(id, opts = {}) {
+  if (!canCallApi()) throw new Error('API URL not configured (set VITE_API_URL or use npm run dev with proxy)');
+  const admin = opts.admin === true;
+  const r = await fetchWithAuth(apiUrl(`/api/products/${encodeURIComponent(id)}/`), {
+    method: 'GET',
+    auth: admin,
+  });
+  if (r.status === 404) {
+    const err = new Error('Product not found');
+    err.code = 'NOT_FOUND';
+    throw err;
+  }
+  if (!r.ok) throw new Error(`Failed to load product (${r.status})`);
+  const p = await r.json();
+  return mapProductRow(p, { storefront: !admin });
 }
 
 /** Load every product page for the admin panel (JWT required). */
@@ -405,11 +455,19 @@ export async function fetchShoeFilterOptions({ search } = {}) {
 
 /** @returns {Promise<Array<{ id: number, name: string, slug: string }>>} */
 export async function listCategories() {
-  if (!canCallApi()) throw new Error('API URL not configured');
-  const r = await fetch(apiUrl('/api/categories/'));
-  if (!r.ok) throw new Error(`Categories failed (${r.status})`);
-  const data = await r.json();
-  return Array.isArray(data) ? data : data.results || [];
+  if (!canCallApi()) return [];
+  try {
+    const r = await fetch(apiUrl('/api/categories/'));
+    if (!r.ok) {
+      if (import.meta.env.DEV) console.warn(`[categories] ${r.status}`);
+      return [];
+    }
+    const data = await r.json();
+    return Array.isArray(data) ? data : data.results || [];
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn('[categories] fetch failed', e);
+    return [];
+  }
 }
 
 export async function createProduct(body) {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { ShoppingBag } from 'lucide-react';
 
-const STORE = 'GoldyMart';
+const STORE = 'Goldy Mart';
 
 const LoadingScreen = ({ onLoadingComplete }) => {
   const { theme } = useTheme();
@@ -31,11 +31,11 @@ const LoadingScreen = ({ onLoadingComplete }) => {
   if (!isVisible) return null;
 
   const shell = isDark
-    ? 'bg-gradient-to-br from-[#0c1210] via-emerald-950/50 to-[#0c1210]'
-    : 'bg-gradient-to-br from-stone-50 via-emerald-50/60 to-amber-50/70';
+    ? 'bg-gradient-to-br from-dark via-primary-950/50 to-dark'
+    : 'bg-gradient-to-br from-stone-50 via-primary-50/60 to-amber-50/70';
 
   const gridColor = isDark ? 'rgba(52, 211, 153, 0.1)' : 'rgba(22, 101, 52, 0.12)';
-  const particleClass = isDark ? 'bg-emerald-400/35' : 'bg-emerald-600/30';
+  const particleClass = isDark ? 'bg-primary-400/35' : 'bg-primary-600/30';
 
   return (
     <div
@@ -69,15 +69,15 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       <div className="relative z-10 px-4 text-center">
         <div className="relative mx-auto mb-8 flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center">
           <div
-            className="absolute inset-0 rounded-full border-2 border-emerald-500/20 dark:border-emerald-400/20"
+            className="absolute inset-0 rounded-full border-2 border-primary-500/20 dark:border-primary-400/20"
             aria-hidden
           />
           <svg viewBox="0 0 120 120" className="absolute h-full w-full -rotate-90" aria-hidden>
             <defs>
               <linearGradient id="gmLoadRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#15803d" />
-                <stop offset="50%" stopColor="#16a34a" />
-                <stop offset="100%" stopColor="#ca8a04" />
+                <stop offset="0%" stopColor="#4338ca" />
+                <stop offset="50%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#d97706" />
               </linearGradient>
             </defs>
             <circle
@@ -92,7 +92,7 @@ const LoadingScreen = ({ onLoadingComplete }) => {
               className="transition-all duration-300"
             />
           </svg>
-          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-700/95 to-emerald-600/95 shadow-lg shadow-emerald-900/35 ring-2 ring-amber-400/25 dark:ring-white/10">
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-700/95 to-primary-600/95 shadow-lg shadow-primary-900/35 ring-2 ring-amber-400/25 dark:ring-white/10">
             <ShoppingBag className="h-10 w-10 text-white" strokeWidth={1.75} />
           </div>
         </div>
@@ -102,7 +102,7 @@ const LoadingScreen = ({ onLoadingComplete }) => {
             isDark ? 'text-white' : 'text-stone-900'
           }`}
         >
-          <span className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-primary-700 via-primary-600 to-amber-600 bg-clip-text text-transparent">
             {STORE}
           </span>
         </h1>
@@ -112,14 +112,14 @@ const LoadingScreen = ({ onLoadingComplete }) => {
 
         <div className="mx-auto w-52 sm:w-64">
           <div
-            className={`h-2 overflow-hidden rounded-full ${isDark ? 'bg-stone-800' : 'bg-emerald-100'}`}
+            className={`h-2 overflow-hidden rounded-full ${isDark ? 'bg-stone-800' : 'bg-primary-100'}`}
           >
             <div
-              className="h-full rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-amber-500 transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-primary-600 via-primary-500 to-amber-500 transition-all duration-300"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
-          <p className="mt-3 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+          <p className="mt-3 text-sm font-semibold text-primary-700 dark:text-primary-300">
             {Math.min(Math.round(progress), 100)}%
           </p>
         </div>

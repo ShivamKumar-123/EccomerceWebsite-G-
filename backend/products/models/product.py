@@ -18,6 +18,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     image = models.URLField(max_length=500)
+    # Extra gallery URLs (first should match `image` for storefront cards).
+    images = models.JSONField(default=list, blank=True)
     badge = models.CharField(max_length=64, blank=True)
     rating = models.DecimalField(max_digits=2, decimal_places=1, default=4.5)
     # For apparel: [{"size": "M", "stock": 10}, ...]. Empty = no size selection on storefront.
@@ -28,8 +30,13 @@ class Product(models.Model):
     genders = models.JSONField(default=list, blank=True)
     brand = models.CharField(max_length=120, blank=True)
     colors = models.JSONField(default=list, blank=True)
-    # 0–100; display “X% off” and discount filters (sale price is still `price`).
-    discount_percent = models.PositiveSmallIntegerField(default=0)
+    # MRP / list price (optional). Sale/checkout price is `price`.
+    original_price = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    # 0–100 each; admin can set different “offer” vs “sale” messaging per product.
+    offer_discount_percent = models.PositiveSmallIntegerField(default=0)
+    sale_discount_percent = models.PositiveSmallIntegerField(default=0)
     # Pipe-wrapped slugs for fast filtering (synced in save()).
     age_slugs = models.CharField(max_length=120, blank=True, editable=False)
     gender_slugs = models.CharField(max_length=120, blank=True, editable=False)

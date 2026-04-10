@@ -9,8 +9,8 @@ import {
 
 function Section({ title, children }) {
   return (
-    <div className="border-b border-stone-200 dark:border-white/10 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
-      <h3 className="text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-3">{title}</h3>
+    <div className="mb-4 border-b border-white/10 pb-4 last:mb-0 last:border-0 last:pb-0">
+      <h3 className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.12em] text-secondary-500">{title}</h3>
       {children}
     </div>
   );
@@ -20,14 +20,14 @@ function CheckboxRow({ checked, onChange, label, id }) {
   return (
     <label
       htmlFor={id}
-      className="flex items-center gap-2.5 py-1.5 px-1 rounded-lg hover:bg-stone-100 dark:hover:bg-white/5 cursor-pointer text-sm text-stone-800 dark:text-stone-200"
+      className="flex cursor-pointer items-center gap-2.5 rounded-xl px-1 py-2 text-sm text-white/90 transition-colors hover:bg-white/8"
     >
       <input
         id={id}
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 rounded border-stone-300 text-emerald-700 focus:ring-emerald-500/50 dark:border-stone-600 dark:bg-stone-800"
+        className="h-4 w-4 rounded border-white/20 bg-primary-900 text-secondary-600 focus:ring-secondary-500/50"
       />
       <span>{label}</span>
     </label>
@@ -95,11 +95,11 @@ export default function ProductFilterSidebar({
     String(minRating || '').trim() !== '';
 
   return (
-    <div className="bg-white dark:bg-stone-900/95 border border-stone-200/90 dark:border-white/10 rounded-2xl shadow-soft overflow-hidden">
+    <div className="overflow-hidden rounded-3xl border border-white/10 bg-primary-900/95 shadow-modern backdrop-blur-xl">
       {showHeader && (
-        <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-stone-200 dark:border-white/10 bg-stone-50/80 dark:bg-stone-800/50">
-          <div className="flex items-center gap-2 font-bold text-stone-900 dark:text-white text-sm">
-            <SlidersHorizontal size={18} className="text-emerald-700 dark:text-emerald-400" />
+        <div className="flex items-center justify-between gap-2 border-b border-white/10 bg-gradient-to-r from-primary-950 to-primary-900 px-4 py-3.5">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-white">
+            <SlidersHorizontal size={18} className="text-secondary-500" />
             Filters
           </div>
           <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ export default function ProductFilterSidebar({
               <button
                 type="button"
                 onClick={onClear}
-                className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400"
+                className="text-xs font-semibold text-secondary-400 hover:text-secondary-300"
               >
                 Clear all
               </button>
@@ -116,7 +116,7 @@ export default function ProductFilterSidebar({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-white/10 lg:hidden"
+                className="rounded-lg p-1.5 hover:bg-white/10 lg:hidden"
                 aria-label="Close filters"
               >
                 <X size={20} />
@@ -158,7 +158,7 @@ export default function ProductFilterSidebar({
         <Section title="Brand">
           <div className="space-y-0.5 max-h-48 overflow-y-auto pr-1">
             {(facets.brands || []).length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400">No brands in this result set</p>
+              <p className="text-xs text-primary-400">No brands in this result set</p>
             ) : (
               facets.brands.map((b) => (
                 <CheckboxRow
@@ -176,7 +176,7 @@ export default function ProductFilterSidebar({
         <Section title="Size">
           <div className="space-y-0.5 max-h-44 overflow-y-auto pr-1">
             {(facets.sizes || []).length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400">No sizes for current category</p>
+              <p className="text-xs text-primary-400">No sizes for current category</p>
             ) : (
               facets.sizes.map((s) => (
                 <CheckboxRow
@@ -194,7 +194,7 @@ export default function ProductFilterSidebar({
         <Section title="Color">
           <div className="space-y-0.5 max-h-44 overflow-y-auto pr-1">
             {colorIds.length === 0 ? (
-              <p className="text-xs text-stone-500 dark:text-stone-400">No colors in this result set</p>
+              <p className="text-xs text-primary-400">No colors in this result set</p>
             ) : (
               colorIds.map((cid) => (
                 <CheckboxRow
@@ -212,25 +212,25 @@ export default function ProductFilterSidebar({
         <Section title="Price (₹)">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[10px] font-semibold text-stone-500 uppercase">Min</label>
+              <label className="text-[10px] font-semibold uppercase text-primary-400">Min</label>
               <input
                 type="number"
                 min={0}
                 placeholder="0"
                 value={minPrice}
                 onChange={(e) => onPriceChange('min', e.target.value)}
-                className="mt-0.5 w-full px-2.5 py-2 rounded-lg border border-stone-200 bg-stone-50 text-sm dark:bg-stone-800 dark:border-white/10 dark:text-white"
+                className="mt-0.5 w-full rounded-lg border border-white/10 bg-primary-950 px-2.5 py-2 text-sm text-white"
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-stone-500 uppercase">Max</label>
+              <label className="text-[10px] font-semibold uppercase text-primary-400">Max</label>
               <input
                 type="number"
                 min={0}
                 placeholder="Any"
                 value={maxPrice}
                 onChange={(e) => onPriceChange('max', e.target.value)}
-                className="mt-0.5 w-full px-2.5 py-2 rounded-lg border border-stone-200 bg-stone-50 text-sm dark:bg-stone-800 dark:border-white/10 dark:text-white"
+                className="mt-0.5 w-full rounded-lg border border-white/10 bg-primary-950 px-2.5 py-2 text-sm text-white"
               />
             </div>
           </div>

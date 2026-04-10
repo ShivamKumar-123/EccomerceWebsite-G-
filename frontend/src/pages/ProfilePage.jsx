@@ -103,10 +103,10 @@ const ProfilePage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'approved': return 'text-green-600 bg-green-100';
+      case 'approved': return 'text-primary-600 bg-primary-100';
       case 'rejected': return 'text-red-600 bg-red-100';
-      case 'shipped': return 'text-blue-600 bg-blue-100';
-      case 'delivered': return 'text-emerald-600 bg-emerald-100';
+      case 'shipped': return 'text-secondary-800 bg-secondary-100 dark:bg-secondary-900/40 dark:text-secondary-200';
+      case 'delivered': return 'text-primary-600 bg-primary-100';
       default: return 'text-yellow-600 bg-yellow-100';
     }
   };
@@ -126,10 +126,10 @@ const ProfilePage = () => {
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 pt-24 sm:pt-32 pb-14 sm:pb-20">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 pt-24 sm:pt-32 pb-14 sm:pb-20">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-bold shadow-xl mx-auto sm:mx-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-bold shadow-xl mx-auto sm:mx-0">
               {user.name?.charAt(0).toUpperCase()}
             </div>
             <div className="text-center sm:text-left min-w-0">
@@ -158,7 +158,7 @@ const ProfilePage = () => {
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                         activeTab === item.id
-                          ? 'bg-green-600 text-white'
+                          ? 'bg-primary-600 text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
@@ -187,7 +187,7 @@ const ProfilePage = () => {
                     {!isEditing ? (
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-100 text-green-600 rounded-xl hover:bg-green-200 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-600 rounded-xl hover:bg-primary-200 transition-colors"
                       >
                         <Edit size={18} />
                         Edit
@@ -196,7 +196,7 @@ const ProfilePage = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={handleSave}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors"
                         >
                           <Save size={18} />
                           Save
@@ -221,7 +221,7 @@ const ProfilePage = () => {
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.name}</p>
@@ -241,7 +241,7 @@ const ProfilePage = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.phone || 'Not provided'}</p>
@@ -256,7 +256,7 @@ const ProfilePage = () => {
                           name="city"
                           value={formData.city}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.city || 'Not provided'}</p>
@@ -271,7 +271,7 @@ const ProfilePage = () => {
                           value={formData.address}
                           onChange={handleChange}
                           rows={3}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.address || 'Not provided'}</p>
@@ -286,7 +286,7 @@ const ProfilePage = () => {
                           name="state"
                           value={formData.state}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.state || 'Not provided'}</p>
@@ -301,7 +301,7 @@ const ProfilePage = () => {
                           name="pincode"
                           value={formData.pincode}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       ) : (
                         <p className="text-gray-900 font-medium">{user.pincode || 'Not provided'}</p>
@@ -328,7 +328,7 @@ const ProfilePage = () => {
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h2>
                     <button
                       onClick={loadOrders}
-                      className="text-green-600 hover:text-green-700 font-medium"
+                      className="text-primary-600 hover:text-primary-700 font-medium"
                     >
                       Refresh
                     </button>
@@ -343,7 +343,7 @@ const ProfilePage = () => {
                       <p className="text-gray-600 mb-6">You haven't placed any orders yet.</p>
                       <Link
                         to="/products"
-                        className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-colors"
+                        className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-700 transition-colors"
                       >
                         Start Shopping <ChevronRight size={20} />
                       </Link>
@@ -368,11 +368,38 @@ const ProfilePage = () => {
                                 {getStatusIcon(order.status)}
                                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                               </span>
-                              <span className="font-bold text-green-600 text-lg">
+                              <span className="font-bold text-primary-600 text-lg">
                                 {formatPrice(order.total * 1.18)}
                               </span>
                             </div>
                           </div>
+
+                          {order.status === 'delivered' &&
+                            Array.isArray(order.deliveryProofImages) &&
+                            order.deliveryProofImages.length > 0 && (
+                              <div className="border-t pt-4">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">
+                                  Delivery confirmation photos
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {order.deliveryProofImages.map((src, i) => (
+                                    <a
+                                      key={`${src}-${i}`}
+                                      href={src}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="block h-20 w-20 overflow-hidden rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    >
+                                      <img
+                                        src={src}
+                                        alt={`Delivery proof ${i + 1}`}
+                                        className="h-full w-full object-cover"
+                                      />
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
 
                           <div className="border-t pt-4">
                             <div className="flex flex-wrap gap-4">
@@ -409,7 +436,7 @@ const ProfilePage = () => {
                             </p>
                             <Link
                               to="/track-order"
-                              className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1"
+                              className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center gap-1"
                             >
                               Track Order <ChevronRight size={16} />
                             </Link>

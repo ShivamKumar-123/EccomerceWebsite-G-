@@ -4,7 +4,11 @@ from rest_framework import serializers
 
 from products.models import Banner, Category, Product, SiteSection
 from products.models.product import ALLOWED_AGE_SLUGS, ALLOWED_GENDER_SLUGS
-from products.services.product_service import normalize_size_variants, parse_price
+from products.services.product_service import (
+    effective_size_variants_for_product,
+    normalize_size_variants,
+    parse_price,
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -77,7 +81,11 @@ class ProductReadSerializer(serializers.ModelSerializer):
     genders = serializers.JSONField(read_only=True)
     brand = serializers.CharField(read_only=True)
     colors = serializers.JSONField(read_only=True)
-    discountPercent = serializers.IntegerField(source="discount_percent", read_only=True)
+    originalPrice = serializers.SerializerMethodField()
+    offerDiscountPercent = serializers.SerializerMethodField()
+    saleDiscountPercent = serializers.SerializerMethodField()
+    discountPercent = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField()
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
 
     class Meta:
@@ -88,6 +96,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             "category",
             "stock",
             "image",
+            "images",
             "badge",
             "rating",
             "is_active",
@@ -96,12 +105,36 @@ class ProductReadSerializer(serializers.ModelSerializer):
             "genders",
             "brand",
             "colors",
+            "originalPrice",
+            "offerDiscountPercent",
+            "saleDiscountPercent",
             "discountPercent",
             "createdAt",
         )
 
     def get_sizeVariants(self, obj):
-        return normalize_size_variants(obj.size_variants)
+        return effective_size_variants_for_product(obj)
+
+    def get_originalPrice(self, obj):
+        if obj.original_price is None:
+            return None
+        return format_inr(obj.original_price)
+
+    def get_offerDiscountPercent(self, obj):
+        return int(obj.offer_discount_percent or 0)
+
+    def get_saleDiscountPercent(self, obj):
+        return int(obj.sale_discount_percent or 0)
+
+    def get_discountPercent(self, obj):
+        return int(obj.sale_discount_percent or 0)
+
+    def get_images(self, obj):
+        raw = obj.images if isinstance(obj.images, list) else []
+        urls = [str(u).strip() for u in raw if str(u).strip()][:24]
+        if not urls and obj.image:
+            return [obj.image]
+        return urls
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -137,12 +170,29 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         required=False,
         default=list,
     )
-    discountPercent = serializers.IntegerField(
-        source="discount_percent",
+    originalPrice = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+    offerDiscountPercent = serializers.IntegerField(
+        source="offer_discount_percent",
         required=False,
         default=0,
         min_value=0,
         max_value=100,
+    )
+    saleDiscountPercent = serializers.IntegerField(
+        source="sale_discount_percent",
+        required=False,
+        default=0,
+        min_value=0,
+        max_value=100,
+    )
+    images = serializers.ListField(
+        child=serializers.CharField(max_length=500, allow_blank=True),
+        required=False,
+        allow_empty=True,
     )
 
     class Meta:
@@ -153,6 +203,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "price",
             "stock",
             "image",
+            "images",
             "badge",
             "rating",
             "is_active",
@@ -161,7 +212,9 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "genders",
             "brand",
             "colors",
-            "discountPercent",
+            "originalPrice",
+            "offerDiscountPercent",
+            "saleDiscountPercent",
         )
 
     def to_representation(self, instance):
@@ -169,7 +222,18 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         data["ageGroups"] = instance.age_groups or []
         data["genders"] = instance.genders or []
         data["colors"] = instance.colors or []
-        data["discountPercent"] = int(instance.discount_percent or 0)
+        data["originalPrice"] = (
+            format_inr(instance.original_price)
+            if instance.original_price is not None
+            else None
+        )
+        data["offerDiscountPercent"] = int(instance.offer_discount_percent or 0)
+        data["saleDiscountPercent"] = int(instance.sale_discount_percent or 0)
+        data["discountPercent"] = int(instance.sale_discount_percent or 0)
+        imgs = instance.images if isinstance(instance.images, list) else []
+        data["images"] = [str(u).strip() for u in imgs if str(u).strip()][:24]
+        if not data["images"] and instance.image:
+            data["images"] = [instance.image]
         return data
 
     def validate_age_groups(self, value):
@@ -181,11 +245,31 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     def validate_colors(self, value):
         return _norm_colors(value or [])[:20]
 
+    def validate_originalPrice(self, value):
+        if value in (None, ""):
+            return None
+        d = parse_price(value)
+        if d is None:
+            raise serializers.ValidationError("Invalid original price.")
+        return d
+
     def validate(self, attrs):
         if self.instance is None:
             raw = attrs.get("price")
             if raw is None or (isinstance(raw, str) and not raw.strip()):
                 raise serializers.ValidationError({"price": "This field is required."})
+        if "originalPrice" in attrs:
+            orig = attrs["originalPrice"]
+        else:
+            orig = self.instance.original_price if self.instance else None
+        if "price" in attrs:
+            price_dec = attrs["price"]
+        else:
+            price_dec = self.instance.price if self.instance else None
+        if orig is not None and price_dec is not None and orig < price_dec:
+            raise serializers.ValidationError(
+                {"originalPrice": "Must be greater than or equal to sale price."}
+            )
         return attrs
 
     def validate_price(self, value):
@@ -201,6 +285,10 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
         c = validated_data["category"]
         sv = normalize_size_variants(validated_data.pop("sizeVariants", None))
+        orig = validated_data.pop("originalPrice", None)
+        op = validated_data.pop("offer_discount_percent", 0)
+        sp = validated_data.pop("sale_discount_percent", 0)
+        imgs = validated_data.pop("images", None)
         payload = {
             "name": validated_data["name"],
             "category": c.slug,
@@ -215,8 +303,12 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "genders": validated_data.get("genders", []),
             "brand": validated_data.get("brand", "") or "",
             "colors": validated_data.get("colors", []),
-            "discount_percent": int(validated_data.get("discount_percent", 0) or 0),
+            "original_price": orig,
+            "offer_discount_percent": int(op or 0),
+            "sale_discount_percent": int(sp or 0),
         }
+        if imgs is not None:
+            payload["images"] = imgs
         return ProductService.create(payload)
 
     def update(self, instance, validated_data):
@@ -249,10 +341,18 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             payload["brand"] = str(validated_data.get("brand") or "").strip()[:120]
         if "colors" in validated_data:
             payload["colors"] = _norm_colors(validated_data["colors"])[:20]
-        if "discount_percent" in validated_data:
-            payload["discount_percent"] = max(
-                0, min(100, int(validated_data.get("discount_percent") or 0))
+        if "originalPrice" in validated_data:
+            payload["original_price"] = validated_data["originalPrice"]
+        if "offer_discount_percent" in validated_data:
+            payload["offer_discount_percent"] = max(
+                0, min(100, int(validated_data.get("offer_discount_percent") or 0))
             )
+        if "sale_discount_percent" in validated_data:
+            payload["sale_discount_percent"] = max(
+                0, min(100, int(validated_data.get("sale_discount_percent") or 0))
+            )
+        if "images" in validated_data:
+            payload["images"] = validated_data["images"]
         return ProductService.update(instance, payload)
 
 

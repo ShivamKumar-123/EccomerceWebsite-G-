@@ -1,42 +1,168 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Star,
   ShoppingCart,
-  Sparkles,
   Zap,
   Shield,
   Truck,
-  ChevronLeft,
-  ChevronRight,
+  TrendingUp,
+  Heart,
+  Tag,
+  CheckCircle2,
 } from 'lucide-react';
 import AdBanner from '../components/AdBanner';
 import HomeSiteSections from '../components/HomeSiteSections';
 import SiteLoader from '../components/SiteLoader';
 import SEOHead from '../components/SEOHead';
+import PaginationBar from '../components/PaginationBar';
+import LazyImage from '../components/LazyImage';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import ProductSizeSelect from '../components/ProductSizeSelect';
 import FavoriteButton from '../components/FavoriteButton';
 import { canCallApi, listProducts, listCategories } from '../services/productsApi';
 import { filterVisibleCategories, REMOVED_CATEGORY_SLUGS } from '../lib/catalogPolicy';
+import { getProductPriceStack } from '../lib/productPricing';
 
-const STORE = 'GoldyMart';
-
-/** Products per page in Trending (matches max columns on large screens). */
+const STORE = 'Goldy Mart';
 const TRENDING_PER_PAGE = 6;
 
-function CategoryIcon({ slug }) {
-  const map = {
-    electronics: '⚡',
-    fashion: '👕',
-    'home-kitchen': '🏠',
-    beauty: '✨',
-    sports: '🏃',
-    books: '📚',
-    clothes: '👔',
-  };
-  return <span className="text-2xl">{map[slug] || '🛒'}</span>;
+const CATEGORY_ICONS = {
+  electronics: { icon: '⚡', color: 'from-secondary-500/20 to-secondary-600/10', accent: 'text-secondary-500 dark:text-secondary-400' },
+  fashion:     { icon: '👗', color: 'from-rose-500/15 to-rose-600/10', accent: 'text-rose-500 dark:text-rose-400' },
+  'home-kitchen': { icon: '🏠', color: 'from-amber-500/15 to-orange-500/10', accent: 'text-amber-600 dark:text-amber-400' },
+  beauty:      { icon: '✨', color: 'from-fuchsia-500/15 to-rose-500/10', accent: 'text-fuchsia-600 dark:text-fuchsia-400' },
+  sports:      { icon: '🏃', color: 'from-emerald-600/15 to-emerald-500/10', accent: 'text-emerald-600 dark:text-emerald-400' },
+  books:       { icon: '📚', color: 'from-amber-600/15 to-secondary-500/10', accent: 'text-amber-600 dark:text-secondary-400' },
+  clothes:     { icon: '👔', color: 'from-lime-600/15 to-lime-500/10', accent: 'text-lime-600 dark:text-lime-400' },
+  shoes:       { icon: '👟', color: 'from-orange-500/15 to-red-500/10', accent: 'text-orange-600 dark:text-orange-400' },
+};
+
+function CategoryCard({ cat }) {
+  const meta = CATEGORY_ICONS[cat.slug] || { icon: '🛒', color: 'from-stone-500/15 to-stone-400/10', accent: 'text-stone-500' };
+  return (
+    <Link
+      to={`/products?category=${encodeURIComponent(cat.slug)}`}
+      className="group relative overflow-hidden rounded-[1.35rem] border border-stone-200/60 bg-white/80 p-5 shadow-soft backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary-400/50 hover:shadow-modern dark:border-white/10 dark:bg-stone-900/50 dark:hover:border-primary-500/40"
+    >
+      <div className={`pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${meta.color} opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-70`} />
+      <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${meta.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+      <div className="relative flex flex-col">
+        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-stone-100 to-stone-50 text-2xl shadow-inner ring-1 ring-stone-200/80 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md dark:from-white/10 dark:to-white/5 dark:ring-white/10">
+          {meta.icon}
+        </div>
+        <p className="font-display text-[15px] font-bold leading-snug text-stone-900 dark:text-white">
+          {cat.name}
+        </p>
+        <span className={`mt-2 inline-flex items-center gap-1 text-xs font-semibold ${meta.accent}`}>
+          Shop now
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function ProductCard({ product, selectedSize, onSizeChange, onAddToCart }) {
+  const stack = getProductPriceStack(product);
+  const { showPromo, originalDisplay, finalDisplay, offFromMrp } = stack;
+  const offerPct = Number(product.offerDiscountPercent) || 0;
+  const salePct = Number(product.saleDiscountPercent) || 0;
+
+  return (
+    <div className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-200/70 bg-white/95 card-premium shadow-soft backdrop-blur-sm hover:border-secondary-500/45 hover:shadow-[0_10px_32px_-8px_rgba(184,116,68,0.22)] dark:border-white/10 dark:bg-stone-800/70 dark:hover:border-secondary-500/40">
+      <Link
+        to={`/product/${product.id}`}
+        className="flex min-h-0 flex-1 flex-col rounded-t-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+      >
+        {/* Image — shorter than square so row feels lighter */}
+        <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden bg-stone-50 dark:bg-stone-900/60">
+          <FavoriteButton
+            product={product}
+            className="absolute right-2 top-2 z-10 rounded-full bg-white/95 shadow-sm dark:bg-stone-900/95"
+            size={16}
+          />
+          <LazyImage
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+          />
+          <div className="absolute left-2 top-2 flex flex-col gap-0.5">
+            {product.badge && (
+              <span className="rounded-md bg-gradient-to-r from-primary-700 to-secondary-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white shadow-sm">
+                {product.badge}
+              </span>
+            )}
+            {offerPct > 0 && (
+              <span className="rounded-md bg-amber-600 px-1.5 py-0.5 text-[9px] font-black text-white shadow-sm">
+                Offer {offerPct}%
+              </span>
+            )}
+            {salePct > 0 && (
+              <span className="rounded-md bg-red-600 px-1.5 py-0.5 text-[9px] font-black text-white shadow-sm">
+                Sale {salePct}%
+              </span>
+            )}
+            {offFromMrp > 0 && !offerPct && !salePct && (
+              <span className="rounded-md bg-red-500 px-1.5 py-0.5 text-[9px] font-black text-white shadow-sm">
+                -{offFromMrp}%
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col px-2.5 pb-1 pt-1.5">
+          <p className="h-[2.125rem] overflow-hidden text-[11px] font-medium leading-snug text-stone-700 line-clamp-2 dark:text-stone-200">
+            {product.name}
+          </p>
+          <div className="mt-1 flex shrink-0 items-center gap-0.5">
+            <div className="flex items-center gap-px">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-2.5 w-2.5 ${i < Math.round(product.rating || 4) ? 'fill-secondary-400 text-secondary-400' : 'text-stone-300 dark:text-stone-600'}`}
+                />
+              ))}
+            </div>
+            <span className="text-[10px] text-stone-400 dark:text-stone-500">({product.rating || '4.0'})</span>
+          </div>
+          <div className="mt-0.5 flex shrink-0 flex-col gap-0.5">
+            {showPromo && originalDisplay ? (
+              <p
+                className="text-[10px] font-semibold text-stone-400"
+                style={{
+                  textDecorationLine: 'line-through underline',
+                  textDecorationThickness: '1px',
+                  textUnderlineOffset: '2px',
+                }}
+              >
+                MRP {originalDisplay}
+              </p>
+            ) : null}
+            <p className="text-sm font-black leading-tight text-stone-900 dark:text-white">{finalDisplay}</p>
+          </div>
+          <span className="mt-1 inline-flex items-center gap-0.5 text-[10px] font-bold text-primary-700 dark:text-primary-400">
+            View details
+            <ArrowRight className="h-3 w-3" />
+          </span>
+        </div>
+      </Link>
+
+      <div className="mt-auto flex flex-col gap-1.5 px-2.5 pb-2 pt-1">
+        <ProductSizeSelect product={product} value={selectedSize || ''} onChange={onSizeChange} />
+        <button
+          type="button"
+          onClick={onAddToCart}
+          className="flex w-full shrink-0 items-center justify-center gap-1 rounded-full bg-gradient-to-r from-secondary-600 to-secondary-800 py-2 text-[10px] font-extrabold text-white shadow-md shadow-primary-900/25 ring-1 ring-secondary-400/25 transition-all hover:brightness-105 active:scale-[0.98]"
+        >
+          <ShoppingCart size={12} />
+          Add to cart
+        </button>
+      </div>
+    </div>
+  );
 }
 
 const HomePage = () => {
@@ -45,18 +171,19 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSizes, setSelectedSizes] = useState({});
-  const [trendingPage, setTrendingPage] = useState(0);
+  const [trendingPage, setTrendingPage] = useState(1);
+  const [trendingTotalCount, setTrendingTotalCount] = useState(0);
+  const [trendingRefreshing, setTrendingRefreshing] = useState(false);
+  const [backendHint, setBackendHint] = useState(null);
+  const categoriesFetchedRef = useRef(false);
   const { addToCart } = useCart();
+  const { isAuthenticated: isStoreAdmin } = useAuth();
 
-  const trendingTotalPages = Math.max(1, Math.ceil(dealProducts.length / TRENDING_PER_PAGE));
-  const trendingSlice = dealProducts.slice(
-    trendingPage * TRENDING_PER_PAGE,
-    trendingPage * TRENDING_PER_PAGE + TRENDING_PER_PAGE
-  );
+  const trendingTotalPages = Math.max(1, Math.ceil(trendingTotalCount / TRENDING_PER_PAGE) || 1);
 
   useEffect(() => {
-    setTrendingPage((p) => Math.min(p, Math.max(0, trendingTotalPages - 1)));
-  }, [trendingTotalPages]);
+    if (trendingPage > trendingTotalPages) setTrendingPage(trendingTotalPages);
+  }, [trendingPage, trendingTotalPages]);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,47 +193,83 @@ const HomePage = () => {
         setLoading(false);
         return;
       }
-      setLoading(true);
+      if (trendingPage === 1) setLoading(true);
+      else setTrendingRefreshing(true);
       setError(null);
+      if (trendingPage === 1) setBackendHint(null);
       try {
-        const [proRes, crows] = await Promise.all([
-          listProducts({ admin: false, page: 1, pageSize: 40 }),
-          listCategories(),
-        ]);
-        if (cancelled) return;
-        const visibleP = (proRes.results || []).filter(
-          (p) => !REMOVED_CATEGORY_SLUGS.has(String(p.category || '').trim())
-        );
-        setDealProducts(
-          visibleP.slice(0, 14).map((p) => ({
-            ...p,
-            sizeVariants: p.sizeVariants || p.size_variants || [],
-          }))
-        );
-        setCategories(filterVisibleCategories(crows || []).slice(0, 10));
+        if (trendingPage === 1 && !categoriesFetchedRef.current) {
+          const settled = await Promise.allSettled([
+            listProducts({ admin: false, page: 1, pageSize: TRENDING_PER_PAGE }),
+            listCategories(),
+          ]);
+          if (cancelled) return;
+          const proRes =
+            settled[0].status === 'fulfilled'
+              ? settled[0].value
+              : { results: [], count: 0 };
+          const crows = settled[1].status === 'fulfilled' ? settled[1].value : [];
+          if (settled[0].status === 'rejected' || settled[1].status === 'rejected') {
+            setBackendHint(
+              'Catalog API unavailable. Start Django (e.g. python manage.py runserver on port 8000) and refresh. With Vite dev, leave VITE_API_URL empty so /api is proxied to Django.'
+            );
+          }
+          const visibleP = (proRes.results || []).filter(
+            (p) => !REMOVED_CATEGORY_SLUGS.has(String(p.category || '').trim())
+          );
+          setDealProducts(visibleP);
+          setTrendingTotalCount(typeof proRes.count === 'number' ? proRes.count : visibleP.length);
+          setCategories(filterVisibleCategories(crows || []).slice(0, 10));
+          categoriesFetchedRef.current = true;
+        } else {
+          const proRes = await listProducts({
+            admin: false,
+            page: trendingPage,
+            pageSize: TRENDING_PER_PAGE,
+          });
+          if (cancelled) return;
+          const visibleP = (proRes.results || []).filter(
+            (p) => !REMOVED_CATEGORY_SLUGS.has(String(p.category || '').trim())
+          );
+          setDealProducts(visibleP);
+          setTrendingTotalCount(typeof proRes.count === 'number' ? proRes.count : visibleP.length);
+        }
       } catch (e) {
         if (!cancelled) {
-          setError(e?.message || 'Failed to load');
+          setBackendHint(e?.message || 'Failed to load home data.');
           setDealProducts([]);
+          setTrendingTotalCount(0);
+          if (trendingPage === 1 && !categoriesFetchedRef.current) setCategories([]);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setTrendingRefreshing(false);
+        }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [trendingPage]);
+
+  const handleAddToCart = (product) => {
+    const needSize = Array.isArray(product.sizeVariants) && product.sizeVariants.length > 0;
+    const size = needSize ? selectedSizes[product.id] : undefined;
+    if (needSize && !String(size || '').trim()) { alert('Please select a size.'); return; }
+    const ok = addToCart(product, { size: needSize ? size : undefined });
+    if (!ok) alert('Could not add — size may be out of stock.');
+  };
 
   if (error === 'no-api') {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4 bg-stone-100 dark:bg-stone-950">
-        <div className="max-w-lg text-center rounded-3xl border border-emerald-200/70 bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50/60 p-10 shadow-card dark:from-emerald-950/50 dark:via-stone-900 dark:to-stone-950 dark:border-emerald-800/40 dark:shadow-2xl">
+      <div className="min-h-[70vh] flex items-center justify-center px-4">
+        <div className="max-w-lg text-center rounded-3xl border border-primary-200/70 bg-gradient-to-br from-primary-50 via-stone-50 to-amber-50/60 p-10 shadow-card dark:from-primary-950/50 dark:via-stone-900 dark:to-stone-950 dark:border-primary-800/40">
           <h1 className="text-2xl font-black text-stone-900 dark:text-white mb-3">Backend required</h1>
           <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed mb-6">
-            Add <code className="text-emerald-800 dark:text-emerald-300">VITE_API_URL=http://127.0.0.1:8000</code> to{' '}
-            <code className="text-emerald-800 dark:text-emerald-300">frontend/.env.development</code>, run{' '}
-            <code className="text-emerald-800 dark:text-emerald-300">python manage.py runserver</code>, then restart Vite.
+            Add <code className="text-primary-800 dark:text-primary-300">VITE_API_URL=http://127.0.0.1:8000</code> to{' '}
+            <code className="text-primary-800 dark:text-primary-300">frontend/.env.development</code>, run{' '}
+            <code className="text-primary-800 dark:text-primary-300">python manage.py runserver</code>, then restart Vite.
           </p>
           <p className="text-xs text-stone-500">Products, orders & banners are stored in Django + SQLite.</p>
         </div>
@@ -115,224 +278,280 @@ const HomePage = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-stone-100 text-stone-900 dark:bg-[#0c1210] dark:text-white transition-colors">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground transition-colors dark:bg-transparent dark:text-[#F8F7F5]">
       <SEOHead
         title={`${STORE} — Shop electronics, fashion, home & more`}
         description="Premium online store — all categories, secure checkout, pan-India delivery."
-        keywords="online shopping, electronics, fashion, home, GoldyMart"
-        url="https://www.heavytechmachinery.com/"
+        keywords="online shopping, electronics, fashion, home, Goldy Mart"
+        url="https://www.goldymart.com/"
       />
 
-      {/* Hero */}
-      <section className="relative">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(22,101,52,0.14),transparent),radial-gradient(ellipse_80%_50%_at_100%_50%,rgba(202,138,4,0.08),transparent)] dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(22,101,52,0.35),transparent),radial-gradient(ellipse_80%_50%_at_100%_50%,rgba(202,138,4,0.12),transparent),radial-gradient(ellipse_60%_40%_at_0%_80%,rgba(52,211,153,0.1),transparent)]" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.04\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-70 dark:bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.03\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] dark:opacity-60" />
-        <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-14 sm:pb-20 w-full min-w-0">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-10">
-            <div className="max-w-2xl w-full min-w-0">
-              <p className="inline-flex flex-wrap items-center gap-2 text-emerald-800 dark:text-emerald-200/90 text-xs sm:text-sm font-semibold mb-4">
-                <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                Curated deals · Genuine brands · Fast dispatch
-              </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.06] text-stone-900 dark:text-white">
-                Everything you love,
-                <span className="block mt-1 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-600 dark:from-emerald-400 dark:via-emerald-300 dark:to-amber-400 bg-clip-text text-transparent">
-                  one premium store
+      {/* ── Hero — bento + bold type ── */}
+      <section className="relative overflow-hidden bg-background pb-6 pt-6 sm:pb-10 sm:pt-10 lg:pb-16 lg:pt-14 dark:bg-transparent">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/4 top-0 h-[min(100vw,28rem)] w-[min(100%,40rem)] -translate-x-1/4 rounded-full bg-primary-500/12 blur-[100px] dark:bg-primary-500/20" />
+          <div className="absolute bottom-0 right-0 h-[min(100vw,22rem)] w-[min(100%,32rem)] rounded-full bg-secondary-400/12 blur-[90px] dark:bg-amber-500/12" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.35] dark:opacity-[0.15]" />
+        </div>
+
+        <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            {/* Copy */}
+            <div className="lg:col-span-6 xl:col-span-5">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200/70 bg-white/80 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-primary-800 shadow-sm backdrop-blur-md dark:border-primary-500/25 dark:bg-primary-950/35 dark:text-primary-100 sm:text-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-secondary-500" />
+                </span>
+                New arrivals weekly
+              </div>
+
+              <h1 className="font-display text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-stone-900 dark:text-white sm:text-5xl xl:text-[3.5rem]">
+                Style that fits
+                <span className="mt-1 block bg-gradient-to-r from-secondary-600 via-secondary-500 to-amber-600 bg-clip-text text-transparent">
+                  your everyday
                 </span>
               </h1>
-              <p className="mt-4 sm:mt-5 text-stone-600 dark:text-stone-300 text-base sm:text-lg max-w-xl leading-relaxed">
-                Electronics, fashion, home, beauty & more — powered by a real backend. Your cart stays in-session;
-                orders sync to the server at checkout.
+
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-stone-600 dark:text-stone-300 sm:text-lg">
+                One destination for electronics, fashion, home & beauty — fast checkout, real inventory, delivery you can track.
               </p>
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   to="/products"
-                  className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-emerald-700 to-emerald-600 font-bold text-white text-sm sm:text-base shadow-lg shadow-emerald-900/25 hover:shadow-emerald-900/40 hover:scale-[1.02] transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-cta px-8 py-4 text-sm font-extrabold text-cta-fg shadow-modern shadow-black/15 transition-all hover:scale-[1.02] hover:bg-primary-100 active:scale-[0.98] dark:shadow-black/30 dark:hover:bg-white/90"
                 >
-                  Shop all
-                  <ArrowRight size={20} />
+                  Start shopping
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
-                  to="/track-order"
-                  className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-2xl border-2 border-stone-300/90 text-stone-800 text-sm sm:text-base font-semibold hover:bg-white/90 hover:border-emerald-200 dark:border-white/20 dark:text-white dark:hover:bg-white/5 transition-colors"
+                  to="/shoes"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-stone-200/90 bg-white/90 px-8 py-4 text-sm font-bold text-stone-800 shadow-soft backdrop-blur-sm transition-all hover:border-primary-300 hover:bg-white dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
                 >
-                  Track order
+                  Footwear edit
                 </Link>
               </div>
+
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-stone-600 dark:text-stone-400">
+                {['Secure UPI & cards', 'Pan-India shipping', 'GST-ready invoices'].map((t) => (
+                  <span key={t} className="inline-flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary-500" strokeWidth={2.5} />
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              {isStoreAdmin ? (
+                <p className="mt-6 text-xs text-stone-500 dark:text-stone-500 sm:text-sm">
+                  <span className="font-semibold text-stone-700 dark:text-stone-400">Store admin</span>{' '}
+                  <Link
+                    to="/admin/dashboard"
+                    className="font-bold text-primary-600 underline decoration-primary-400/40 underline-offset-4 hover:text-primary-500 dark:text-primary-400"
+                  >
+                    Open dashboard
+                  </Link>
+                </p>
+              ) : null}
             </div>
-            <div className="flex gap-4 lg:gap-6 flex-wrap lg:justify-end">
-              {[
-                { icon: Zap, t: 'Flash deals', s: 'Daily price drops' },
-                { icon: Shield, t: 'Secure pay', s: 'UPI & bank' },
-                { icon: Truck, t: 'Delivery', s: 'Across India' },
-              ].map((x) => (
-                <div
-                  key={x.t}
-                  className="flex items-center gap-3 rounded-2xl border border-stone-200/90 bg-white/95 backdrop-blur-md px-4 py-3 min-w-[140px] shadow-soft dark:bg-white/5 dark:border-white/10"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-emerald-600 flex items-center justify-center shadow-sm">
-                    <x.icon size={20} className="text-white" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-stone-900 dark:text-white">{x.t}</p>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">{x.s}</p>
+
+            {/* Bento */}
+            <div className="lg:col-span-6 xl:col-span-7">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="col-span-2 group relative overflow-hidden rounded-[1.5rem] border border-white/60 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-primary-600/15 p-6 shadow-modern backdrop-blur-xl dark:border-white/10 dark:from-amber-500/10 dark:via-stone-900/80 dark:to-primary-950/50 sm:p-8">
+                  <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-400/25 blur-3xl transition-opacity group-hover:opacity-90" />
+                  <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-orange-900/20">
+                        <Zap className="h-7 w-7 text-white" strokeWidth={2.2} />
+                      </div>
+                      <div>
+                        <p className="font-display text-lg font-extrabold text-stone-900 dark:text-white sm:text-xl">Flash deals</p>
+                        <p className="mt-1 max-w-xs text-sm text-stone-600 dark:text-stone-400">Price drops on trending picks — refreshed often.</p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/products"
+                      className="inline-flex shrink-0 items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-xs font-bold text-white transition-transform hover:scale-105 dark:bg-white dark:text-stone-900"
+                    >
+                      View deals
+                    </Link>
                   </div>
                 </div>
-              ))}
+
+                <div className="group relative overflow-hidden rounded-[1.35rem] border border-white/60 bg-white/75 p-5 shadow-soft backdrop-blur-xl transition-all hover:border-primary-300/50 hover:shadow-modern dark:border-white/10 dark:bg-stone-900/60 dark:hover:border-secondary-500/30 sm:p-6">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-secondary-500/8 to-secondary-600/12 opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="relative flex h-full flex-col">
+                    <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-secondary-500 to-secondary-700 shadow-md">
+                      <Shield className="h-5 w-5 text-white" strokeWidth={2.2} />
+                    </div>
+                    <p className="font-display font-bold text-stone-900 dark:text-white">Safe checkout</p>
+                    <p className="mt-1 text-xs leading-relaxed text-stone-500 dark:text-stone-400">Encrypted payments & trusted gateways.</p>
+                  </div>
+                </div>
+
+                <div className="group relative overflow-hidden rounded-[1.35rem] border border-white/60 bg-white/75 p-5 shadow-soft backdrop-blur-xl transition-all hover:border-primary-300/50 hover:shadow-modern dark:border-white/10 dark:bg-stone-900/60 dark:hover:border-secondary-500/30 sm:p-6">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-500/8 to-secondary-600/12 opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="relative flex h-full flex-col">
+                    <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600 to-secondary-700 shadow-md">
+                      <Truck className="h-5 w-5 text-white" strokeWidth={2.2} />
+                    </div>
+                    <p className="font-display font-bold text-stone-900 dark:text-white">Fast delivery</p>
+                    <p className="mt-1 text-xs leading-relaxed text-stone-500 dark:text-stone-400">Dispatch updates & order tracking.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent dark:from-surface" />
       </section>
 
-      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 -mt-4 pb-12 sm:pb-16 space-y-10 sm:space-y-12 w-full min-w-0">
+      {/* ─────────────────────────────────────
+          MAIN CONTENT
+      ───────────────────────────────────── */}
+      <div className="mx-auto w-full max-w-7xl space-y-14 px-4 pb-20 pt-2 sm:space-y-20 sm:px-6 sm:pb-24 lg:px-8">
+
+        {backendHint && (
+          <div
+            role="status"
+            className="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 shadow-soft backdrop-blur-sm dark:border-amber-800/50 dark:bg-amber-950/35 dark:text-amber-100"
+          >
+            <Zap className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <span>{backendHint}</span>
+          </div>
+        )}
+
         <AdBanner />
 
         {/* Categories */}
-        <section>
-          <div className="flex items-end justify-between mb-5">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 dark:text-white tracking-tight">Shop by category</h2>
-            <Link to="/products" className="text-sm font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 flex items-center gap-1">
-              View all <ArrowRight size={16} />
+        <section className="rounded-[1.75rem] border border-stone-200/60 bg-white/50 p-6 shadow-modern backdrop-blur-xl dark:border-white/10 dark:bg-stone-900/40 sm:p-8 lg:p-10">
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-600 dark:text-primary-400">01 — Browse</span>
+              <h2 className="font-display mt-2 text-3xl font-extrabold tracking-tight text-stone-900 dark:text-white sm:text-4xl">
+                Shop by category
+              </h2>
+              <p className="mt-2 max-w-md text-sm text-stone-500 dark:text-stone-400">Jump straight into what you need — filters work on every listing.</p>
+            </div>
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 self-start rounded-full border border-primary-200/80 bg-primary-50 px-4 py-2 text-sm font-bold text-primary-800 transition-colors hover:bg-primary-100 dark:border-primary-500/30 dark:bg-primary-950/50 dark:text-primary-200 dark:hover:bg-primary-900/40 sm:self-auto"
+            >
+              Full catalogue
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
+
           {loading ? (
             <SiteLoader message="Loading categories…" className="py-10" />
           ) : error ? (
-            <p className="text-red-600 dark:text-red-400 text-center py-8">{error}</p>
+            <p className="py-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
+          ) : categories.length === 0 ? (
+            <p className="py-8 text-center text-sm text-stone-500 dark:text-stone-400">
+              No categories yet — start Django and seed categories.
+            </p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-4">
               {categories.map((c) => (
-                <Link
-                  key={c.slug}
-                  to={`/products?category=${encodeURIComponent(c.slug)}`}
-                  className="group relative rounded-2xl p-5 bg-gradient-to-br from-white to-stone-50 border border-stone-200/90 hover:border-emerald-400/70 card-hover hover:shadow-card dark:from-stone-800/90 dark:to-stone-900/90 dark:border-white/10 dark:hover:border-emerald-500/40"
-                >
-                  <div className="mb-3 group-hover:scale-110 transition-transform duration-300">
-                    <CategoryIcon slug={c.slug} />
-                  </div>
-                  <p className="font-bold text-stone-900 text-sm leading-tight group-hover:text-emerald-800 dark:text-white dark:group-hover:text-emerald-300 transition-colors">
-                    {c.name}
-                  </p>
-                  <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-stone-400 group-hover:text-emerald-700 dark:text-stone-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                </Link>
+                <CategoryCard key={c.slug} cat={c} />
               ))}
             </div>
           )}
         </section>
 
-        {/* Deals */}
-        <section className="rounded-3xl border border-stone-200/90 bg-gradient-to-br from-white via-stone-50 to-emerald-50/50 p-5 sm:p-8 shadow-card dark:from-stone-900 dark:via-stone-900 dark:to-emerald-950/30 dark:border-white/10 dark:shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 dark:text-white tracking-tight">Trending now</h2>
-            <Link to="/products" className="text-sm font-bold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300">
-              See more →
+        {/* Trending */}
+        <section className="rounded-[1.75rem] border border-stone-200/60 bg-gradient-to-b from-white/70 to-stone-50/50 p-6 shadow-modern backdrop-blur-xl dark:border-white/10 dark:from-stone-900/50 dark:to-stone-950/50 sm:p-8 lg:p-10">
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="flex items-start gap-3">
+              <div className="hidden rounded-2xl bg-gradient-to-br from-secondary-600 to-secondary-800 p-3 text-white shadow-lg sm:block">
+                <TrendingUp className="h-6 w-6" strokeWidth={2.2} />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-600 dark:text-primary-400">02 — Trending</span>
+                <h2 className="font-display mt-2 flex flex-wrap items-center gap-2 text-3xl font-extrabold tracking-tight text-stone-900 dark:text-white sm:text-4xl">
+                  Popular right now
+                  <TrendingUp className="h-7 w-7 text-primary-500 sm:hidden" />
+                </h2>
+                <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">Hand-picked from the catalogue — sizes & cart ready.</p>
+              </div>
+            </div>
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 self-start rounded-full bg-stone-900 px-4 py-2 text-sm font-bold text-white transition-transform hover:scale-[1.02] dark:bg-white dark:text-stone-900 sm:self-auto"
+            >
+              See everything
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="space-y-5">
-            {dealProducts.length === 0 && !loading && (
-              <p className="text-stone-500 dark:text-stone-400 text-sm py-8 w-full text-center">No products yet — add some in Django admin or the store dashboard.</p>
-            )}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            {trendingSlice.map((product) => (
-              <div
-                key={product.id}
-                className="min-w-0 rounded-2xl border border-stone-200/90 bg-white overflow-hidden hover:border-emerald-400/70 hover:shadow-card transition-all group dark:bg-stone-800/80 dark:border-white/10 dark:hover:border-emerald-500/35"
-              >
-                <Link
-                  to={`/products?category=${encodeURIComponent(product.category || 'all')}`}
-                  className="block"
-                >
-                  <div className="aspect-square bg-stone-100 p-3 relative dark:bg-stone-900/50">
-                    <FavoriteButton
-                      product={product}
-                      className="absolute top-2 right-2 z-10 bg-white/95 dark:bg-stone-900/95 shadow-sm"
-                      size={20}
-                    />
-                    <img
-                      src={product.image}
-                      alt=""
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {product.badge && (
-                      <span className="absolute top-2 left-2 text-[10px] font-black uppercase tracking-wide bg-gradient-to-r from-amber-500 to-emerald-800 text-white px-2 py-0.5 rounded-md shadow-sm">
-                        {product.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <p className="text-xs text-stone-800 line-clamp-2 min-h-[2.5rem] font-medium leading-snug dark:text-stone-200">{product.name}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                      <span className="text-xs text-stone-500 dark:text-stone-400">{product.rating}</span>
-                    </div>
-                    <p className="text-base font-black text-stone-900 mt-1 dark:text-white">{product.price}</p>
-                  </div>
-                </Link>
-                <div className="px-3 pb-3 space-y-2">
-                  <ProductSizeSelect
-                    product={product}
-                    value={selectedSizes[product.id] || ''}
-                    onChange={(v) => setSelectedSizes((s) => ({ ...s, [product.id]: v }))}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const needSize =
-                        Array.isArray(product.sizeVariants) && product.sizeVariants.length > 0;
-                      const size = needSize ? selectedSizes[product.id] : undefined;
-                      if (needSize && !String(size || '').trim()) {
-                        alert('Please select a size.');
-                        return;
-                      }
-                      const ok = addToCart(product, { size: needSize ? size : undefined });
-                      if (!ok) alert('Could not add — size may be out of stock.');
-                    }}
-                    className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-stone-900 text-xs font-bold hover:from-amber-400 hover:to-amber-500 transition-all shadow-sm"
-                  >
-                    <ShoppingCart size={14} />
-                    Add to cart
-                  </button>
-                </div>
-              </div>
-            ))}
-            </div>
 
-            {dealProducts.length > TRENDING_PER_PAGE && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
-                <p className="text-xs text-stone-600 dark:text-stone-400 text-center sm:text-left">
-                  Page{' '}
-                  <span className="font-semibold text-stone-800 dark:text-stone-200">{trendingPage + 1}</span> of{' '}
-                  <span className="font-semibold text-stone-800 dark:text-stone-200">{trendingTotalPages}</span>
-                  <span className="text-stone-500 dark:text-stone-500">
-                    {' '}
-                    · {dealProducts.length} picks
-                  </span>
-                </p>
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    disabled={trendingPage <= 0}
-                    onClick={() => setTrendingPage((p) => Math.max(0, p - 1))}
-                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-800 hover:border-emerald-400/70 disabled:opacity-40 disabled:pointer-events-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
-                  >
-                    <ChevronLeft size={16} />
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    disabled={trendingPage >= trendingTotalPages - 1}
-                    onClick={() => setTrendingPage((p) => Math.min(trendingTotalPages - 1, p + 1))}
-                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-800 hover:border-emerald-400/70 disabled:opacity-40 disabled:pointer-events-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
-                  >
-                    Next
-                    <ChevronRight size={16} />
-                  </button>
+          {loading && dealProducts.length === 0 ? (
+            <SiteLoader message="Loading trending products…" className="py-12" />
+          ) : dealProducts.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-stone-200/90 py-16 text-center dark:border-white/15">
+              <ShoppingCart className="mx-auto mb-3 h-10 w-10 text-stone-300 dark:text-stone-600" />
+              <p className="text-sm text-stone-500 dark:text-stone-400">Add products in Django admin to fill this row.</p>
+            </div>
+          ) : (
+            <div className="relative">
+              {trendingRefreshing ? (
+                <div className="pointer-events-none absolute inset-0 z-[1] flex items-start justify-center rounded-2xl bg-white/60 pt-8 backdrop-blur-[2px] dark:bg-stone-950/50">
+                  <SiteLoader message="Loading products…" className="py-4" />
                 </div>
+              ) : null}
+              <div
+                className={`grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6 ${trendingRefreshing ? 'opacity-60' : ''}`}
+              >
+                {dealProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    selectedSize={selectedSizes[product.id]}
+                    onSizeChange={(v) => setSelectedSizes((s) => ({ ...s, [product.id]: v }))}
+                    onAddToCart={() => handleAddToCart(product)}
+                  />
+                ))}
               </div>
-            )}
+            </div>
+          )}
+
+          <PaginationBar
+            className="mt-8"
+            currentPage={trendingPage}
+            totalPages={trendingTotalPages}
+            totalCount={trendingTotalCount}
+            pageSize={TRENDING_PER_PAGE}
+            onPageChange={setTrendingPage}
+          />
+        </section>
+
+        {/* Trust band */}
+        <section className="relative overflow-hidden rounded-[1.75rem] border border-secondary-500/25 bg-gradient-to-br from-primary-950 via-primary-900 to-secondary-950 p-[1px] shadow-modern">
+          <div className="relative rounded-[1.7rem] bg-gradient-to-br from-primary-900/95 via-primary-800/95 to-primary-950 px-6 py-10 sm:px-12 sm:py-12">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_100%_0%,rgba(184,116,68,0.22),transparent)]" />
+            <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-20" />
+            <div className="relative grid gap-10 sm:grid-cols-3 sm:gap-8">
+              {[
+                { icon: Tag, title: 'Sharp pricing', desc: 'Deals and offers on brands you already like.' },
+                { icon: Truck, title: 'Nationwide reach', desc: 'Reliable shipping with tracking on orders.' },
+                { icon: Heart, title: 'Built for shoppers', desc: 'Wishlist, sizes, and a cart that remembers you.' },
+              ].map((x) => (
+                <div key={x.title} className="flex gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
+                    <x.icon className="h-6 w-6 text-secondary-300" strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-white">{x.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-primary-100/70">{x.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
+        {/* Site sections from Django */}
         <HomeSiteSections />
       </div>
     </div>

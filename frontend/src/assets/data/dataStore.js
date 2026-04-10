@@ -1,13 +1,13 @@
-// Data Store - Centralized data management for HeavyTech
+// Data Store - Centralized data management for Goldy Mart
 // All data is stored in localStorage with proper structure
 
 const STORAGE_KEYS = {
-  USERS: 'heavytech_users',
-  ORDERS: 'heavytech_orders',
-  CART: 'heavytech_cart',
-  CURRENT_USER: 'heavytech_current_user',
-  ADMIN: 'heavytech_admin',
-  PRODUCTS: 'heavytech_products',
+  USERS: 'goldymart_users',
+  ORDERS: 'goldymart_orders',
+  CART: 'goldymart_cart',
+  CURRENT_USER: 'goldymart_current_user',
+  ADMIN: 'goldymart_admin',
+  PRODUCTS: 'goldymart_products',
 };
 
 // Helper function to safely get data from localStorage

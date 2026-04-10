@@ -9,14 +9,16 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ArrowRight,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import SEOHead from '../components/SEOHead';
 import SiteLoader from '../components/SiteLoader';
 import ProductSizeSelect from '../components/ProductSizeSelect';
 import FavoriteButton from '../components/FavoriteButton';
+import LazyImage from '../components/LazyImage';
 import ShoeFilterSidebar from '../components/ShoeFilterSidebar';
-import { buildCartLineId } from '../lib/cartLine';
+import { buildCartLineId, cartLineColorKey } from '../lib/cartLine';
 import {
   canCallApi,
   listProducts,
@@ -31,6 +33,7 @@ import {
   DISCOUNT_TIER_OPTIONS,
   SORT_OPTIONS,
 } from '../lib/shoeConstants';
+import { getProductPriceStack } from '../lib/productPricing';
 
 function parseComma(sp, key) {
   const v = sp.get(key);
@@ -234,14 +237,7 @@ const ShoesPage = () => {
           setCatalogPage(1);
           return;
         }
-        setProducts(
-          rows.map((p) => ({
-            ...p,
-            rating: p.rating != null ? Number(p.rating) : 4.5,
-            sizeVariants: p.sizeVariants || p.size_variants || [],
-            discountPercent: p.discountPercent || 0,
-          }))
-        );
+        setProducts(rows);
       } catch (e) {
         if (!cancelled) {
           if (e?.code === 'INVALID_PAGE' && page > 1) {
@@ -273,7 +269,11 @@ const ShoesPage = () => {
       alert('Could not add to cart — this size may be out of stock.');
       return;
     }
-    const lineKey = buildCartLineId(product.id, needSize ? size : null);
+    const lineKey = buildCartLineId(
+      product.id,
+      needSize ? size : null,
+      cartLineColorKey(product, null)
+    );
     setAddedToCart(lineKey);
     setTimeout(() => setAddedToCart(null), 2000);
   };
@@ -347,26 +347,27 @@ const ShoesPage = () => {
 
   if (error === 'no-api') {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center px-4 bg-stone-100 dark:bg-[#0c1210]">
+      <div className="flex min-h-[50vh] items-center justify-center bg-transparent px-4 dark:bg-transparent">
         <p className="text-stone-600 dark:text-stone-400 text-sm text-center">Configure API URL and run Django to browse footwear.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-stone-100 pb-24 lg:pb-12 dark:bg-[#0c1210] transition-colors">
+    <div className="min-h-screen bg-transparent pb-24 transition-colors lg:pb-12 dark:bg-transparent">
       <SEOHead
-        title="Footwear — GoldyMart"
+        title="Footwear — Goldy Mart"
         description="Filter shoes by type, brand, size, price, color, discount & rating."
-        keywords="shoes, sneakers, footwear, filters, GoldyMart"
-        url="https://www.heavytechmachinery.com/shoes"
+        keywords="shoes, sneakers, footwear, filters, Goldy Mart"
+        url="https://www.goldymart.com/shoes"
       />
 
-      <div className="border-b border-stone-200/80 bg-gradient-to-r from-emerald-100/90 via-stone-50 to-amber-50/80 dark:from-emerald-950/50 dark:via-stone-950 dark:to-stone-900 dark:border-white/10">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-10 w-full min-w-0">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 dark:text-white tracking-tight">Footwear</h1>
-          <p className="text-stone-600 dark:text-stone-400 mt-2 text-sm">
-            <Link to="/" className="hover:text-emerald-800 dark:hover:text-emerald-300">
+      <div className="relative overflow-hidden border-b border-stone-200/70 bg-gradient-to-br from-white/90 via-primary-50/50 to-amber-50/40 dark:border-white/10 dark:from-[#12162a]/90 dark:via-primary-950/30 dark:to-stone-950/90">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_100%_0%,rgba(251,191,36,0.1),transparent)]" />
+        <div className="relative mx-auto w-full max-w-7xl min-w-0 px-3 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-stone-900 dark:text-white sm:text-4xl md:text-[2.75rem]">Footwear</h1>
+          <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
+            <Link to="/" className="hover:text-primary-800 dark:hover:text-primary-300">
               Home
             </Link>
             <span className="mx-2">/</span>
@@ -377,25 +378,25 @@ const ShoesPage = () => {
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 -mt-4 w-full min-w-0">
         <form
-          className="rounded-2xl border border-stone-200/90 bg-white/95 p-4 shadow-card dark:bg-stone-900/90 dark:border-white/10 mb-6 flex flex-col sm:flex-row gap-3"
+          className="mb-6 flex flex-col gap-3 rounded-3xl border border-stone-200/80 bg-white/85 p-4 shadow-modern backdrop-blur-xl dark:border-white/10 dark:bg-stone-900/70 sm:flex-row sm:items-stretch"
           onSubmit={(e) => {
             e.preventDefault();
             setSearchParams((prev) => buildParams(prev, { ...filtersFromSP(prev), q: searchQuery.trim() }, 1), { replace: true });
           }}
         >
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
             <input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search shoes, brands…"
-              className="w-full pl-10 pr-3 py-3 rounded-xl border border-stone-200 bg-stone-50 text-sm dark:bg-stone-800 dark:border-white/10 dark:text-white"
+              className="w-full rounded-full border border-stone-200 bg-stone-50/90 py-3 pl-11 pr-3 text-sm text-stone-900 outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-500/15 dark:border-white/10 dark:bg-stone-800/80 dark:text-white"
             />
           </div>
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-emerald-700 text-white font-bold text-sm hover:bg-emerald-600 shrink-0"
+            className="shrink-0 rounded-full bg-gradient-to-r from-secondary-500 to-secondary-700 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary-900/20 transition-all hover:brightness-105"
           >
             Search
           </button>
@@ -414,7 +415,7 @@ const ShoesPage = () => {
               </>
             )}
           </p>
-          <Link to="/products" className="text-sm font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-400">
+          <Link to="/products" className="text-sm font-semibold text-primary-700 hover:text-primary-800 dark:text-primary-400">
             All categories →
           </Link>
         </div>
@@ -427,13 +428,13 @@ const ShoesPage = () => {
                 key={ch.key}
                 type="button"
                 onClick={ch.remove}
-                className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-medium dark:bg-emerald-900/40 dark:text-emerald-100 border border-emerald-200/80 dark:border-emerald-700/50"
+                className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-primary-100 text-primary-900 text-xs font-medium dark:bg-primary-900/40 dark:text-primary-100 border border-primary-200/80 dark:border-primary-700/50"
               >
                 {ch.label}
                 <X size={14} className="opacity-70" />
               </button>
             ))}
-            <button type="button" onClick={clearAll} className="text-xs font-bold text-stone-600 dark:text-stone-400 hover:text-emerald-700">
+            <button type="button" onClick={clearAll} className="text-xs font-bold text-stone-600 dark:text-stone-400 hover:text-primary-700">
               Clear all
             </button>
           </div>
@@ -451,44 +452,94 @@ const ShoesPage = () => {
               <p className="text-center text-red-600 py-12">{error}</p>
             ) : (
               <div ref={gridAnchorRef} className="scroll-mt-24 space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {products.map((product) => (
+                <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 xl:grid-cols-4">
+                  {products.map((product) => {
+                    const stack = getProductPriceStack(product);
+                    const { showPromo, originalDisplay, finalDisplay, offFromMrp } = stack;
+                    const offerPct = Number(product.offerDiscountPercent) || 0;
+                    const salePct = Number(product.saleDiscountPercent) || 0;
+                    return (
                     <div
                       key={product.id}
-                      className="group flex flex-col rounded-2xl border border-stone-200/90 bg-white overflow-hidden hover:border-emerald-400/70 hover:shadow-card dark:bg-stone-800/90 dark:border-white/10"
+                      className="group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary-400/60 hover:shadow-modern dark:border-white/10 dark:bg-stone-800/90"
                     >
-                      <div className="relative aspect-[4/5] bg-stone-100 p-4 dark:bg-stone-950/50">
+                      <Link
+                        to={`/product/${product.id}`}
+                        className="relative block aspect-[3/4] w-full shrink-0 overflow-hidden bg-stone-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 dark:bg-stone-950/50"
+                      >
                         <FavoriteButton
                           product={product}
-                          className="absolute top-2 right-2 z-10 bg-white/95 dark:bg-stone-900/95"
-                          size={20}
+                          className="absolute right-1.5 top-1.5 z-10 bg-white/95 dark:bg-stone-900/95"
+                          size={18}
                         />
-                        <img src={product.image} alt="" className="w-full h-full object-contain" />
-                        {product.discountPercent > 0 && (
-                          <span className="absolute top-2 left-2 text-[10px] font-black uppercase bg-rose-600 text-white px-2 py-0.5 rounded-md">
-                            {product.discountPercent}% off
-                          </span>
-                        )}
-                        {product.badge && !product.discountPercent && (
-                          <span className="absolute top-2 left-2 text-[10px] font-black uppercase bg-gradient-to-r from-amber-500 to-emerald-800 text-white px-2 py-0.5 rounded-md">
-                            {product.badge}
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-4 flex-1 flex flex-col">
-                        <p className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">
-                          {labelShoeType(product.category)}
-                        </p>
-                        <div className="flex items-center gap-1 mb-1 mt-1">
-                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                          <span className="text-xs text-stone-500">{product.rating}</span>
-                          {product.brand ? (
-                            <span className="text-[10px] text-stone-400 ml-auto truncate max-w-[40%]">{product.brand}</span>
+                        <LazyImage
+                          src={product.image}
+                          alt=""
+                          className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute left-2 top-2 z-[1] flex max-w-[min(100%,11rem)] flex-col gap-0.5">
+                          {product.badge ? (
+                            <span className="w-fit rounded-md bg-gradient-to-r from-primary-700 to-secondary-500 px-1.5 py-0.5 text-[9px] font-black uppercase text-white">
+                              {product.badge}
+                            </span>
+                          ) : null}
+                          {offerPct > 0 ? (
+                            <span className="w-fit rounded-md bg-amber-600 px-1.5 py-0.5 text-[9px] font-black uppercase text-white">
+                              Offer {offerPct}%
+                            </span>
+                          ) : null}
+                          {salePct > 0 ? (
+                            <span className="w-fit rounded-md bg-rose-600 px-1.5 py-0.5 text-[9px] font-black uppercase text-white">
+                              Sale {salePct}%
+                            </span>
+                          ) : null}
+                          {offFromMrp > 0 && !offerPct && !salePct ? (
+                            <span className="w-fit rounded-md bg-rose-600 px-1.5 py-0.5 text-[9px] font-black text-white">
+                              {offFromMrp}% off
+                            </span>
                           ) : null}
                         </div>
-                        <h3 className="text-sm font-medium text-stone-900 line-clamp-2 dark:text-white">{product.name}</h3>
-                        <p className="text-lg font-black text-stone-900 dark:text-white mt-2">{product.price}</p>
-                        <div className="mt-auto pt-3 space-y-2">
+                      </Link>
+                      <div className="flex min-h-0 flex-1 flex-col p-3">
+                        <Link
+                          to={`/product/${product.id}`}
+                          className="block shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40"
+                        >
+                          <p className="text-[9px] font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400">
+                            {labelShoeType(product.category)}
+                          </p>
+                          <div className="mb-0.5 mt-0.5 flex shrink-0 items-center gap-1">
+                            <Star className="h-3 w-3 fill-secondary-400 text-secondary-400" />
+                            <span className="text-[11px] text-stone-500">{product.rating}</span>
+                            {product.brand ? (
+                              <span className="ml-auto max-w-[40%] truncate text-[9px] text-stone-400">{product.brand}</span>
+                            ) : null}
+                          </div>
+                          <h3 className="h-[2.5rem] overflow-hidden text-xs font-medium leading-snug text-stone-900 line-clamp-2 dark:text-white">
+                            {product.name}
+                          </h3>
+                          <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold text-primary-700 hover:text-primary-600 dark:text-primary-400">
+                            View details
+                            <ArrowRight className="h-3 w-3" />
+                          </span>
+                        </Link>
+                        <div className="min-h-0 flex-1" aria-hidden="true" />
+                        <div className="flex shrink-0 flex-col gap-1.5 pt-2">
+                          <div className="flex flex-col gap-0.5">
+                            {showPromo && originalDisplay ? (
+                              <p
+                                className="text-xs font-semibold text-stone-500 dark:text-stone-400"
+                                style={{
+                                  textDecorationLine: 'line-through underline',
+                                  textDecorationThickness: '1px',
+                                  textUnderlineOffset: '2px',
+                                }}
+                              >
+                                MRP {originalDisplay}
+                              </p>
+                            ) : null}
+                            <p className="text-base font-black text-stone-900 dark:text-white">{finalDisplay}</p>
+                          </div>
                           <ProductSizeSelect
                             product={product}
                             value={selectedSizes[product.id] || ''}
@@ -497,26 +548,37 @@ const ShoesPage = () => {
                           <button
                             type="button"
                             onClick={() => handleAddToCart(product)}
-                            className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black ${
-                              addedToCart === buildCartLineId(product.id, selectedSizes[product.id] || null)
-                                ? 'border border-emerald-500/40 bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20'
-                                : 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900'
+                            className={`flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-[11px] font-black ${
+                              addedToCart ===
+                              buildCartLineId(
+                                product.id,
+                                selectedSizes[product.id] || null,
+                                cartLineColorKey(product, null)
+                              )
+                                ? 'border border-primary-500/40 bg-primary-100 text-primary-800 dark:bg-primary-500/20'
+                                : 'bg-cta text-cta-fg shadow-lg shadow-black/30 ring-1 ring-white/10 hover:bg-white/90'
                             }`}
                           >
-                            {addedToCart === buildCartLineId(product.id, selectedSizes[product.id] || null) ? (
+                            {addedToCart ===
+                            buildCartLineId(
+                              product.id,
+                              selectedSizes[product.id] || null,
+                              cartLineColorKey(product, null)
+                            ) ? (
                               <>
-                                <Check size={16} /> Added
+                                <Check size={14} /> Added
                               </>
                             ) : (
                               <>
-                                <ShoppingCart size={16} /> Add to cart
+                                <ShoppingCart size={14} /> Add to cart
                               </>
                             )}
                           </button>
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {productCount > 0 && (
@@ -553,7 +615,7 @@ const ShoesPage = () => {
                 {!loading && products.length === 0 && (
                   <div className="text-center py-16 rounded-2xl border border-dashed border-stone-300 dark:border-white/20">
                     <p className="text-stone-600 dark:text-stone-400 mb-3">No shoes match these filters.</p>
-                    <button type="button" onClick={clearAll} className="text-emerald-700 font-bold text-sm dark:text-emerald-400">
+                    <button type="button" onClick={clearAll} className="text-primary-700 font-bold text-sm dark:text-primary-400">
                       Clear filters
                     </button>
                   </div>
@@ -567,7 +629,7 @@ const ShoesPage = () => {
       <button
         type="button"
         onClick={() => setMobileFiltersOpen(true)}
-        className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-700 text-white font-bold text-sm shadow-lg"
+        className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-5 py-3 rounded-full bg-primary-700 text-white font-bold text-sm shadow-lg"
       >
         <SlidersHorizontal size={18} />
         Filters

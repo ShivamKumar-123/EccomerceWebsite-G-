@@ -53,6 +53,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
+    def get_serializer_context(self):
+        return {**super().get_serializer_context(), "request": self.request}
+
     def get_permissions(self):
         if self.action in ("create", "retrieve", "lookup"):
             return [AllowAny()]
@@ -79,7 +82,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         order = ser.save()
         return Response(
-            OrderSerializer(order).data,
+            OrderSerializer(order, context={"request": request}).data,
             status=status.HTTP_201_CREATED,
         )
 
@@ -93,18 +96,18 @@ class OrderViewSet(viewsets.ModelViewSet):
             u = uuid_std.UUID(q)
             o = qs.filter(pk=u).first()
             if o:
-                return Response(OrderSerializer(o).data)
+                return Response(OrderSerializer(o, context={"request": request}).data)
         except (ValueError, TypeError):
             pass
         o = qs.filter(id__icontains=q).first()
         if o:
-            return Response(OrderSerializer(o).data)
+            return Response(OrderSerializer(o, context={"request": request}).data)
         q_clean = q.replace("-", "").lower()
         for o in qs[:1000]:
             oid = str(o.id).replace("-", "").lower()
             if len(q_clean) >= 6 and oid.endswith(q_clean):
-                return Response(OrderSerializer(o).data)
+                return Response(OrderSerializer(o, context={"request": request}).data)
             phone = str((o.customer_info or {}).get("phone") or "")
             if phone and (q in phone or phone.strip() == q.strip()):
-                return Response(OrderSerializer(o).data)
+                return Response(OrderSerializer(o, context={"request": request}).data)
         return Response({"detail": "not found"}, status=status.HTTP_404_NOT_FOUND)

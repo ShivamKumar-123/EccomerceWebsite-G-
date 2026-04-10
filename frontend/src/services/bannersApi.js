@@ -14,20 +14,28 @@ export function normalizeBanner(row) {
     description: row.description || '',
     image: row.image || '',
     link: row.link || '/products',
-    bgColor: row.bgColor || row.bg_gradient || 'from-emerald-800 to-emerald-950',
+    bgColor: row.bgColor || row.bg_gradient || 'from-primary-800 to-primary-950',
     sortOrder: row.sortOrder ?? row.sort_order ?? 0,
     isActive: row.isActive !== false && row.is_active !== false,
     active: row.isActive !== false && row.is_active !== false,
   };
 }
 
-/** Public: active banners only (no auth). */
+/** Public: active banners only (no auth). Returns [] if backend is down or returns an error (storefront still renders). */
 export async function listBannersPublic() {
-  if (!canCallApi()) throw new Error('API URL not configured');
-  const r = await fetch(apiUrl('/api/banners/'));
-  if (!r.ok) throw new Error(`Banners failed (${r.status})`);
-  const data = await r.json();
-  return parseList(data).map(normalizeBanner).filter((b) => b.active);
+  if (!canCallApi()) return [];
+  try {
+    const r = await fetch(apiUrl('/api/banners/'));
+    if (!r.ok) {
+      if (import.meta.env.DEV) console.warn(`[banners] ${r.status} — is Django running on port 8000?`);
+      return [];
+    }
+    const data = await r.json();
+    return parseList(data).map(normalizeBanner).filter((b) => b.active);
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn('[banners] fetch failed', e);
+    return [];
+  }
 }
 
 /** Admin: all banners (requires JWT). */
@@ -50,7 +58,7 @@ export async function createBanner(body) {
       description: body.description || '',
       image: body.image || '',
       link: body.link || '/products',
-      bgColor: body.bgColor || 'from-blue-600 to-indigo-700',
+      bgColor: body.bgColor || 'from-secondary-600 to-secondary-800',
       sortOrder: body.sortOrder ?? 0,
       isActive: body.isActive !== false && body.active !== false,
     },
